@@ -1,0 +1,68 @@
+'use client'
+
+import { Transaction } from '@/lib/supabase'
+import { formatCurrency, formatDate } from '@/lib/utils'
+import { Trash2 } from 'lucide-react'
+
+interface Props {
+  transactions: Transaction[]
+  onDelete?: (id: string) => void
+}
+
+export default function TransactionTable({ transactions, onDelete }: Props) {
+  if (transactions.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg">Nenhum lançamento encontrado</p>
+        <p className="text-sm mt-1">Adicione seu primeiro gasto!</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-teal-100">
+            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data</th>
+            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descrição</th>
+            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Categoria</th>
+            <th className="text-right py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
+            {onDelete && <th className="py-3 px-4"></th>}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-teal-50">
+          {transactions.map((t) => (
+            <tr key={t.id} className="hover:bg-teal-50/30 transition-colors group">
+              <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">{formatDate(t.date)}</td>
+              <td className="py-3 px-4 text-sm font-medium text-gray-700">{t.description}</td>
+              <td className="py-3 px-4">
+                {t.category ? (
+                  <span
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                    style={{ backgroundColor: t.category.color + '80', color: '#134e4a' }}
+                  >
+                    {t.category.icon} {t.category.name}
+                  </span>
+                ) : (
+                  <span className="text-sm text-gray-400">—</span>
+                )}
+              </td>
+              <td className="py-3 px-4 text-right font-semibold text-teal-700">{formatCurrency(t.amount)}</td>
+              {onDelete && (
+                <td className="py-3 px-4">
+                  <button
+                    onClick={() => onDelete(t.id)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-1 rounded"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
