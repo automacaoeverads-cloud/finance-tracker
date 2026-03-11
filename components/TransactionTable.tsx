@@ -2,6 +2,7 @@
 
 import { Transaction } from '@/lib/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import PaymentBadge from '@/components/PaymentBadge'
 import { Trash2 } from 'lucide-react'
 
 interface Props {
@@ -27,6 +28,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
             <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data</th>
             <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descrição</th>
             <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Categoria</th>
+            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pagamento</th>
             <th className="text-right py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
             {onDelete && <th className="py-3 px-4"></th>}
           </tr>
@@ -47,6 +49,9 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
                 ) : (
                   <span className="text-sm text-gray-400">—</span>
                 )}
+              </td>
+              <td className="py-3 px-4">
+                <PaymentBadge method={t.payment_method} />
               </td>
               <td className="py-3 px-4 text-right font-semibold text-teal-700">{formatCurrency(t.amount)}</td>
               {onDelete && (
