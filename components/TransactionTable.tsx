@@ -21,24 +21,38 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
+    <div className="overflow-x-auto -mx-2 md:mx-0">
+      <table className="w-full min-w-[400px]">
         <thead>
           <tr className="border-b border-teal-100">
-            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data</th>
-            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descrição</th>
-            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Categoria</th>
-            <th className="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pagamento</th>
-            <th className="text-right py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
-            {onDelete && <th className="py-3 px-4"></th>}
+            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data</th>
+            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descrição</th>
+            <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Categoria</th>
+            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pagamento</th>
+            <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
+            {onDelete && <th className="py-3 px-3 md:px-4"></th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-teal-50">
           {transactions.map((t) => (
             <tr key={t.id} className="hover:bg-teal-50/30 transition-colors group">
-              <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">{formatDate(t.date)}</td>
-              <td className="py-3 px-4 text-sm font-medium text-gray-700">{t.description}</td>
-              <td className="py-3 px-4">
+              <td className="py-3 px-3 md:px-4 text-sm text-gray-500 whitespace-nowrap">{formatDate(t.date)}</td>
+              <td className="py-3 px-3 md:px-4">
+                <p className="text-sm font-medium text-gray-700">{t.description}</p>
+                {/* On mobile: show category and payment below description */}
+                <div className="flex flex-wrap gap-1 mt-1 sm:hidden">
+                  {t.category && (
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                      style={{ backgroundColor: t.category.color + '80', color: '#134e4a' }}
+                    >
+                      {t.category.icon} {t.category.name}
+                    </span>
+                  )}
+                  <PaymentBadge method={t.payment_method} />
+                </div>
+              </td>
+              <td className="hidden md:table-cell py-3 px-4">
                 {t.category ? (
                   <span
                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
@@ -50,12 +64,12 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
                   <span className="text-sm text-gray-400">—</span>
                 )}
               </td>
-              <td className="py-3 px-4">
+              <td className="hidden sm:table-cell py-3 px-3 md:px-4">
                 <PaymentBadge method={t.payment_method} />
               </td>
-              <td className="py-3 px-4 text-right font-semibold text-teal-700">{formatCurrency(t.amount)}</td>
+              <td className="py-3 px-3 md:px-4 text-right font-semibold text-teal-700 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {onDelete && (
-                <td className="py-3 px-4">
+                <td className="py-3 px-3 md:px-4">
                   <button
                     onClick={() => onDelete(t.id)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-1 rounded"
