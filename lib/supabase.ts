@@ -13,12 +13,21 @@ export type Category = {
   created_at: string
 }
 
+export type PaymentMethod = 'credito' | 'pix_debito' | 'dinheiro' | null
+
+export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string }[] = [
+  { value: 'credito', label: 'Crédito', icon: '💳', color: '#e8d5f5' },
+  { value: 'pix_debito', label: 'Pix / Débito', icon: '⚡', color: '#b2f0e8' },
+  { value: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#c8f5c8' },
+]
+
 export type Transaction = {
   id: string
   amount: number
   description: string
   category_id: string
   category?: Category
+  payment_method: PaymentMethod
   date: string
   created_at: string
 }
