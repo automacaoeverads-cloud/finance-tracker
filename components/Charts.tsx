@@ -2,7 +2,8 @@
 
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend,
+  BarChart, Bar
 } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
@@ -17,6 +18,13 @@ interface PieData {
 interface LineData {
   month: string
   total: number
+}
+
+interface BarData {
+  name: string
+  value: number
+  color: string
+  icon: string
 }
 
 export function CategoryPieChart({ data }: { data: PieData[] }) {
@@ -42,12 +50,7 @@ export function CategoryPieChart({ data }: { data: PieData[] }) {
         </Pie>
         <Tooltip
           formatter={(value: number) => formatCurrency(value)}
-          contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #ccfbf1',
-            borderRadius: '12px',
-            fontSize: '12px',
-          }}
+          contentStyle={{ backgroundColor: 'white', border: '1px solid #ccfbf1', borderRadius: '12px', fontSize: '12px' }}
         />
         <Legend
           iconType="circle"
@@ -70,35 +73,40 @@ export function MonthlyAreaChart({ data }: { data: LineData[] }) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#f0fdfa" />
-        <XAxis
-          dataKey="month"
-          tick={{ fontSize: 11, fill: '#9ca3af' }}
-          axisLine={false}
-          tickLine={false}
-        />
-        <YAxis
-          tick={{ fontSize: 11, fill: '#9ca3af' }}
-          axisLine={false}
-          tickLine={false}
-          tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-        />
+        <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
         <Tooltip
           formatter={(value: number) => [formatCurrency(value), 'Total']}
-          contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #ccfbf1',
-            borderRadius: '12px',
-            fontSize: '12px',
-          }}
+          contentStyle={{ backgroundColor: 'white', border: '1px solid #ccfbf1', borderRadius: '12px', fontSize: '12px' }}
         />
-        <Area
-          type="monotone"
-          dataKey="total"
-          stroke="#14b8a6"
-          strokeWidth={2}
-          fill="url(#tealGradient)"
-        />
+        <Area type="monotone" dataKey="total" stroke="#14b8a6" strokeWidth={2} fill="url(#tealGradient)" />
       </AreaChart>
+    </ResponsiveContainer>
+  )
+}
+
+export function PaymentBarChart({ data }: { data: BarData[] }) {
+  return (
+    <ResponsiveContainer width="100%" height={160}>
+      <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }} barSize={40}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f0fdfa" vertical={false} />
+        <XAxis
+          dataKey="name"
+          tick={{ fontSize: 11, fill: '#9ca3af' }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
+        <Tooltip
+          formatter={(value: number) => [formatCurrency(value), 'Total']}
+          contentStyle={{ backgroundColor: 'white', border: '1px solid #ccfbf1', borderRadius: '12px', fontSize: '12px' }}
+        />
+        <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Bar>
+      </BarChart>
     </ResponsiveContainer>
   )
 }
