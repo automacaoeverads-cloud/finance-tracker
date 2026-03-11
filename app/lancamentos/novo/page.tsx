@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase, Category } from '@/lib/supabase'
+import { supabase, Category, PAYMENT_METHODS } from '@/lib/supabase'
 import { CheckCircle } from 'lucide-react'
 
 export default function NovoLancamento() {
@@ -16,6 +16,7 @@ export default function NovoLancamento() {
     description: '',
     amount: '',
     category_id: '',
+    payment_method: '',
     date: new Date().toISOString().split('T')[0],
   })
 
@@ -37,6 +38,7 @@ export default function NovoLancamento() {
       description: form.description,
       amount: parseFloat(form.amount),
       category_id: form.category_id || null,
+      payment_method: form.payment_method || null,
       date: form.date,
     })
     setLoading(false)
@@ -44,7 +46,7 @@ export default function NovoLancamento() {
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
-        setForm({ description: '', amount: '', category_id: '', date: new Date().toISOString().split('T')[0] })
+        setForm({ description: '', amount: '', category_id: '', payment_method: '', date: new Date().toISOString().split('T')[0] })
       }, 1500)
     }
   }
@@ -98,19 +100,35 @@ export default function NovoLancamento() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-teal-800 mb-2">Categoria</label>
-            <select
-              name="category_id"
-              value={form.category_id}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
-            >
-              <option value="">Sem categoria</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-              ))}
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-teal-800 mb-2">Categoria</label>
+              <select
+                name="category_id"
+                value={form.category_id}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
+              >
+                <option value="">Sem categoria</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-teal-800 mb-2">Forma de pagamento</label>
+              <select
+                name="payment_method"
+                value={form.payment_method}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
+              >
+                <option value="">Não informado</option>
+                {PAYMENT_METHODS.map(pm => (
+                  <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="flex gap-3 pt-2">
