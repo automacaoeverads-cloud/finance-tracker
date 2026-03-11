@@ -53,7 +53,7 @@ export default function Lancamentos() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-teal-900">Lançamentos</h2>
           <p className="text-sm text-gray-400 mt-1">{filtered.length} registros · {formatCurrency(total)}</p>
@@ -73,7 +73,7 @@ export default function Lancamentos() {
           <Filter className="w-4 h-4 text-teal-500" />
           <span className="text-sm font-semibold text-teal-800">Filtros</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 gap-y-2">
           <div className="relative xl:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
