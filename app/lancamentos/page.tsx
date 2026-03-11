@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category } from '@/lib/supabase'
+import { supabase, Transaction, Category, PAYMENT_METHODS } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/utils'
 import TransactionTable from '@/components/TransactionTable'
 import { Search, Filter, Plus } from 'lucide-react'
@@ -15,6 +15,7 @@ export default function Lancamentos() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
+  const [filterPayment, setFilterPayment] = useState('')
   const [filterMonth, setFilterMonth] = useState('')
   const [filterMinValue, setFilterMinValue] = useState('')
   const [filterMaxValue, setFilterMaxValue] = useState('')
@@ -41,6 +42,7 @@ export default function Lancamentos() {
   const filtered = transactions.filter(t => {
     if (search && !t.description.toLowerCase().includes(search.toLowerCase())) return false
     if (filterCategory && t.category_id !== filterCategory) return false
+    if (filterPayment && t.payment_method !== filterPayment) return false
     if (filterMonth && !t.date.startsWith(filterMonth)) return false
     if (filterMinValue && t.amount < parseFloat(filterMinValue)) return false
     if (filterMaxValue && t.amount > parseFloat(filterMaxValue)) return false
@@ -71,7 +73,7 @@ export default function Lancamentos() {
           <Filter className="w-4 h-4 text-teal-500" />
           <span className="text-sm font-semibold text-teal-800">Filtros</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
           <div className="relative xl:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -87,9 +89,19 @@ export default function Lancamentos() {
             onChange={e => setFilterCategory(e.target.value)}
             className="px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
           >
-            <option value="">Todas as categorias</option>
+            <option value="">Todas categorias</option>
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+            ))}
+          </select>
+          <select
+            value={filterPayment}
+            onChange={e => setFilterPayment(e.target.value)}
+            className="px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
+          >
+            <option value="">Todos pagamentos</option>
+            {PAYMENT_METHODS.map(pm => (
+              <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
             ))}
           </select>
           <input
