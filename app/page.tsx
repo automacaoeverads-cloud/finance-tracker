@@ -3,11 +3,11 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category } from '@/lib/supabase'
+import { supabase, Transaction, Category, PAYMENT_METHODS } from '@/lib/supabase'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 import StatCard from '@/components/StatCard'
 import TransactionTable from '@/components/TransactionTable'
-import { CategoryPieChart, MonthlyAreaChart } from '@/components/Charts'
+import { CategoryPieChart, MonthlyAreaChart, PaymentBarChart } from '@/components/Charts'
 import { TrendingDown, Wallet, Tag, Calendar } from 'lucide-react'
 
 export default function Dashboard() {
@@ -27,18 +27,13 @@ export default function Dashboard() {
     setLoading(true)
     const [{ data: cats }, { data: txns }] = await Promise.all([
       supabase.from('categories').select('*').order('name'),
-      supabase
-        .from('transactions')
-        .select('*, category:categories(*)')
-        .order('date', { ascending: false })
-        .limit(100),
+      supabase.from('transactions').select('*, category:categories(*)').order('date', { ascending: false }).limit(100),
     ])
     setCategories(cats || [])
     setTransactions(txns || [])
     setLoading(false)
   }
 
-  // Stats do mês atual
   const thisMonthTxns = transactions.filter(t => t.date.startsWith(currentMonth))
   const totalMonth = thisMonthTxns.reduce((acc, t) => acc + t.amount, 0)
   const totalAll = transactions.reduce((acc, t) => acc + t.amount, 0)
@@ -51,7 +46,7 @@ export default function Dashboard() {
     color: cat.color,
   })).filter(d => d.value > 0)
 
-  // Dados para gráfico mensal (últimos 6 meses)
+  // Dados para gráfico mensal
   const monthlyData = Array.from({ length: 6 }, (_, i) => {
     const d = new Date()
     d.setMonth(d.getMonth() - (5 - i))
@@ -62,6 +57,14 @@ export default function Dashboard() {
       total,
     }
   })
+
+  // Dados por forma de pagamento (mês atual)
+  const paymentData = PAYMENT_METHODS.map(pm => ({
+    name: `${pm.icon} ${pm.label}`,
+    value: thisMonthTxns.filter(t => t.payment_method === pm.value).reduce((a, t) => a + t.amount, 0),
+    color: pm.color,
+    icon: pm.icon,
+  })).filter(d => d.value > 0)
 
   const recent = transactions.slice(0, 5)
 
@@ -75,7 +78,6 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <h2 className="text-2xl font-bold text-teal-900">Dashboard</h2>
         <p className="text-sm text-gray-400 mt-1">{formatMonth(currentMonth)}</p>
@@ -113,7 +115,7 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Charts */}
+      {/* Charts row 1 */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
           <h3 className="font-semibold text-teal-900 mb-4">Por Categoria — {formatMonth(currentMonth)}</h3>
@@ -129,6 +131,45 @@ export default function Dashboard() {
           <MonthlyAreaChart data={monthlyData} />
         </div>
       </div>
+
+      {/* Payment chart */}
+      {paymentData.length > 0 && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+          <h3 className="font-semibold text-teal-900 mb-1">Por Forma de Pagamento — {formatMonth(currentMonth)}</h3>
+          <p className="text-xs text-gray-400 mb-4">Distribuição dos gastos por método usado</p>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-center">
+            <PaymentBarChart data={paymentData} />
+            <div className="space-y-3">
+              {paymentData.map(pm => (
+                <div key={pm.name} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base flex-shrink-0" style={{ backgroundColor: pm.color }}>
+                    {pm.icon}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-600 font-medium">{pm.name.split(' ').slice(1).join(' ')}</span>
+                      <span className="text-teal-700 font-semibold">{formatCurrency(pm.value)}</span>
+                    </div>
+                    <div className="h-1.5 bg-teal-50 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${totalMonth > 0 ? (pm.value / totalMonth) * 100 : 0}%`,
+                          backgroundColor: pm.color,
+                          filter: 'brightness(0.85)'
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-400 w-10 text-right">
+                    {totalMonth > 0 ? ((pm.value / totalMonth) * 100).toFixed(0) : 0}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent transactions */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
