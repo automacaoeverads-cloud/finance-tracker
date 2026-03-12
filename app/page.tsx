@@ -3,46 +3,59 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category, PAYMENT_METHODS, getPersonColor } from '@/lib/supabase'
+import { supabase, Transaction, Category, PAYMENT_METHODS, getPersonColor, Person } from '@/lib/supabase'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 import StatCard from '@/components/StatCard'
 import TransactionTable from '@/components/TransactionTable'
 import { CategoryPieChart, MonthlyAreaChart, PaymentBarChart } from '@/components/Charts'
-import { TrendingDown, Wallet, Tag, Calendar, ArrowRight } from 'lucide-react'
+import { TrendingDown, Wallet, Tag, Calendar, ArrowRight, SlidersHorizontal, X } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [people, setPeople] = useState<Person[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentMonth] = useState(() => {
+
+  const todayMonth = (() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  })
+  })()
 
-  useEffect(() => {
-    loadData()
-  }, [])
+  const [filterMonth, setFilterMonth] = useState(todayMonth)
+  const [filterPerson, setFilterPerson] = useState('')
+
+  useEffect(() => { loadData() }, [])
 
   async function loadData() {
     setLoading(true)
-    const [{ data: cats }, { data: txns }] = await Promise.all([
+    const [{ data: cats }, { data: txns }, { data: ppl }] = await Promise.all([
       supabase.from('categories').select('*').order('name'),
-      supabase.from('transactions').select('*, category:categories(*)').order('date', { ascending: false }).limit(100),
+      supabase.from('transactions').select('*, category:categories(*)').order('date', { ascending: false }),
+      supabase.from('people').select('*').order('name'),
     ])
     setCategories(cats || [])
     setTransactions(txns || [])
+    setPeople(ppl || [])
     setLoading(false)
   }
 
-  const thisMonthTxns = transactions.filter(t => t.date.startsWith(currentMonth))
-  const totalMonth = thisMonthTxns.reduce((acc, t) => acc + t.amount, 0)
+  const hasFilters = filterMonth !== todayMonth || filterPerson !== ''
+
+  // Aplica filtros
+  const filtered = transactions.filter(t => {
+    if (filterMonth && !t.date.startsWith(filterMonth)) return false
+    if (filterPerson && t.person !== filterPerson) return false
+    return true
+  })
+
+  const totalFiltered = filtered.reduce((acc, t) => acc + t.amount, 0)
   const totalAll = transactions.reduce((acc, t) => acc + t.amount, 0)
-  const avgMonth = totalMonth / (thisMonthTxns.length || 1)
+  const avgFiltered = totalFiltered / (filtered.length || 1)
 
   const pieData = categories.map(cat => ({
     name: cat.name,
-    value: thisMonthTxns.filter(t => t.category_id === cat.id).reduce((a, t) => a + t.amount, 0),
+    value: filtered.filter(t => t.category_id === cat.id).reduce((a, t) => a + t.amount, 0),
     color: cat.color,
   })).filter(d => d.value > 0)
 
@@ -50,29 +63,30 @@ export default function Dashboard() {
     const d = new Date()
     d.setMonth(d.getMonth() - (5 - i))
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    const total = transactions.filter(t => t.date.startsWith(key)).reduce((a, t) => a + t.amount, 0)
+    const base = filterPerson
+      ? transactions.filter(t => t.date.startsWith(key) && t.person === filterPerson)
+      : transactions.filter(t => t.date.startsWith(key))
     return {
       month: new Intl.DateTimeFormat('pt-BR', { month: 'short' }).format(d),
-      total,
+      total: base.reduce((a, t) => a + t.amount, 0),
     }
   })
 
-  // Dados por pessoa (mês atual)
-  const allPeople = Array.from(new Set(thisMonthTxns.map(t => t.person).filter(Boolean))) as string[]
+  const allPeople = Array.from(new Set(filtered.map(t => t.person).filter(Boolean))) as string[]
   const personData = allPeople.map(name => ({
     name,
-    value: thisMonthTxns.filter(t => t.person === name).reduce((a, t) => a + t.amount, 0),
+    value: filtered.filter(t => t.person === name).reduce((a, t) => a + t.amount, 0),
     color: getPersonColor(name),
   })).filter(d => d.value > 0).sort((a, b) => b.value - a.value)
 
   const paymentData = PAYMENT_METHODS.map(pm => ({
     name: `${pm.icon} ${pm.label}`,
-    value: thisMonthTxns.filter(t => t.payment_method === pm.value).reduce((a, t) => a + t.amount, 0),
+    value: filtered.filter(t => t.payment_method === pm.value).reduce((a, t) => a + t.amount, 0),
     color: pm.color,
     icon: pm.icon,
   })).filter(d => d.value > 0)
 
-  const recent = transactions.slice(0, 5)
+  const recent = filtered.slice(0, 5)
 
   if (loading) {
     return (
@@ -83,12 +97,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-7 max-w-7xl">
+    <div className="space-y-6 max-w-7xl">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">{formatMonth(currentMonth)}</p>
+          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+            {filterPerson ? `${filterPerson} · ` : ''}{formatMonth(filterMonth)}
+          </p>
         </div>
         <Link
           href="/lancamentos/novo"
@@ -98,12 +114,49 @@ export default function Dashboard() {
         </Link>
       </div>
 
+      {/* Filters */}
+      <div className="bg-white rounded-2xl p-4 border border-slate-100 flex flex-wrap items-center gap-3"
+        style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
+        <span className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+          <SlidersHorizontal className="w-3.5 h-3.5 text-blue-500" />
+        </span>
+        <span className="text-sm font-semibold text-slate-600 mr-1">Filtrar:</span>
+
+        <input
+          type="month"
+          value={filterMonth}
+          onChange={e => setFilterMonth(e.target.value)}
+          className="px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700"
+        />
+
+        <select
+          value={filterPerson}
+          onChange={e => setFilterPerson(e.target.value)}
+          className="px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-600"
+        >
+          <option value="">Todas as pessoas</option>
+          {people.map(p => (
+            <option key={p.id} value={p.name}>{p.name}</option>
+          ))}
+        </select>
+
+        {hasFilters && (
+          <button
+            onClick={() => { setFilterMonth(todayMonth); setFilterPerson('') }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-500 hover:text-red-500 hover:bg-red-50 border border-slate-200 transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+            Limpar
+          </button>
+        )}
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
-          title="Gasto este mês"
-          value={formatCurrency(totalMonth)}
-          subtitle={`${thisMonthTxns.length} lançamentos`}
+          title={filterPerson ? `Gasto — ${filterPerson}` : 'Gasto no período'}
+          value={formatCurrency(totalFiltered)}
+          subtitle={`${filtered.length} lançamentos`}
           icon={<TrendingDown className="w-5 h-5 text-blue-600" />}
           iconBg="bg-blue-100"
         />
@@ -116,8 +169,8 @@ export default function Dashboard() {
         />
         <StatCard
           title="Média por lançamento"
-          value={formatCurrency(avgMonth)}
-          subtitle="este mês"
+          value={formatCurrency(avgFiltered)}
+          subtitle="no período"
           icon={<Calendar className="w-5 h-5 text-pink-500" />}
           iconBg="bg-pink-100"
         />
@@ -135,18 +188,18 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl p-6 border border-slate-100"
           style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
           <h3 className="font-semibold text-slate-700 mb-1">Por Categoria</h3>
-          <p className="text-xs text-slate-400 mb-4">{formatMonth(currentMonth)}</p>
+          <p className="text-xs text-slate-400 mb-4">{formatMonth(filterMonth)}</p>
           {pieData.length > 0 ? (
             <CategoryPieChart data={pieData} />
           ) : (
-            <p className="text-center text-slate-300 py-12 text-sm">Sem dados este mês</p>
+            <p className="text-center text-slate-300 py-12 text-sm">Sem dados neste período</p>
           )}
         </div>
 
         <div className="bg-white rounded-2xl p-6 border border-slate-100"
           style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
           <h3 className="font-semibold text-slate-700 mb-1">Evolução Mensal</h3>
-          <p className="text-xs text-slate-400 mb-4">Últimos 6 meses</p>
+          <p className="text-xs text-slate-400 mb-4">Últimos 6 meses{filterPerson ? ` — ${filterPerson}` : ''}</p>
           <MonthlyAreaChart data={monthlyData} />
         </div>
       </div>
@@ -156,7 +209,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl p-6 border border-slate-100"
           style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
           <h3 className="font-semibold text-slate-700 mb-1">Por Forma de Pagamento</h3>
-          <p className="text-xs text-slate-400 mb-5">{formatMonth(currentMonth)} — distribuição dos gastos</p>
+          <p className="text-xs text-slate-400 mb-5">{formatMonth(filterMonth)} — distribuição dos gastos</p>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-center">
             <PaymentBarChart data={paymentData} />
             <div className="space-y-3">
@@ -175,14 +228,14 @@ export default function Dashboard() {
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
-                          width: `${totalMonth > 0 ? (pm.value / totalMonth) * 100 : 0}%`,
+                          width: `${totalFiltered > 0 ? (pm.value / totalFiltered) * 100 : 0}%`,
                           backgroundColor: pm.color,
                         }}
                       />
                     </div>
                   </div>
                   <span className="text-xs text-slate-400 w-9 text-right font-semibold">
-                    {totalMonth > 0 ? ((pm.value / totalMonth) * 100).toFixed(0) : 0}%
+                    {totalFiltered > 0 ? ((pm.value / totalFiltered) * 100).toFixed(0) : 0}%
                   </span>
                 </div>
               ))}
@@ -191,31 +244,38 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Person breakdown */}
-      {personData.length > 0 && (
+      {/* Person breakdown — só mostrar se NÃO estiver filtrado por pessoa */}
+      {!filterPerson && personData.length > 0 && (
         <div className="bg-white rounded-2xl p-6 border border-slate-100"
           style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
           <h3 className="font-semibold text-slate-700 mb-1">Gastos por Pessoa</h3>
-          <p className="text-xs text-slate-400 mb-5">{formatMonth(currentMonth)} — quanto cada pessoa gastou</p>
+          <p className="text-xs text-slate-400 mb-5">{formatMonth(filterMonth)} — quanto cada pessoa gastou</p>
           <div className="space-y-3">
             {personData.map(person => (
               <div key={person.name} className="flex items-center gap-3">
-                <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-slate-700 flex-shrink-0 shadow-sm"
+                <button
+                  onClick={() => setFilterPerson(person.name)}
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-slate-700 flex-shrink-0 shadow-sm hover:scale-110 transition-transform cursor-pointer"
                   style={{ backgroundColor: person.color }}
+                  title={`Filtrar por ${person.name}`}
                 >
                   {person.name.charAt(0).toUpperCase()}
-                </div>
+                </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between text-sm mb-1.5">
-                    <span className="text-slate-600 font-medium truncate">{person.name}</span>
+                    <button
+                      onClick={() => setFilterPerson(person.name)}
+                      className="text-slate-600 font-medium truncate hover:text-blue-600 transition-colors"
+                    >
+                      {person.name}
+                    </button>
                     <span className="text-blue-600 font-bold ml-2">{formatCurrency(person.value)}</span>
                   </div>
                   <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
-                        width: `${totalMonth > 0 ? (person.value / totalMonth) * 100 : 0}%`,
+                        width: `${totalFiltered > 0 ? (person.value / totalFiltered) * 100 : 0}%`,
                         backgroundColor: person.color,
                         filter: 'brightness(0.85)'
                       }}
@@ -223,7 +283,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <span className="text-xs text-slate-400 w-9 text-right font-semibold">
-                  {totalMonth > 0 ? ((person.value / totalMonth) * 100).toFixed(0) : 0}%
+                  {totalFiltered > 0 ? ((person.value / totalFiltered) * 100).toFixed(0) : 0}%
                 </span>
               </div>
             ))}
@@ -236,8 +296,10 @@ export default function Dashboard() {
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h3 className="font-semibold text-slate-700">Últimos Lançamentos</h3>
-            <p className="text-xs text-slate-400 mt-0.5">5 mais recentes</p>
+            <h3 className="font-semibold text-slate-700">
+              {filterPerson ? `Lançamentos — ${filterPerson}` : 'Últimos Lançamentos'}
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">{recent.length} mais recentes do período</p>
           </div>
           <Link
             href="/lancamentos"
