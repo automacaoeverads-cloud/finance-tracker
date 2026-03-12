@@ -58,4 +58,5 @@ export type Transaction = {
   date: string
   created_at: string
   person?: string | null
+  paid?: boolean  // novo campo
 }
