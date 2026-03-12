@@ -21,6 +21,7 @@ export default function NovoLancamento() {
     payment_method: '',
     date: new Date().toISOString().split('T')[0],
     person: '',
+    paid: false,
   })
 
   useEffect(() => {
@@ -50,13 +51,14 @@ export default function NovoLancamento() {
       payment_method: form.payment_method || null,
       date: form.date,
       person: form.person || null,
+      paid: form.paid,
     })
     setLoading(false)
     if (!error) {
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
-        setForm({ description: '', amount: '', category_id: '', payment_method: '', date: new Date().toISOString().split('T')[0], person: '' })
+        setForm({ description: '', amount: '', category_id: '', payment_method: '', date: new Date().toISOString().split('T')[0], person: '', paid: false })
       }, 1500)
     }
   }
@@ -130,6 +132,19 @@ export default function NovoLancamento() {
               <option value="">Não informado</option>
               {people.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
             </select>
+          </div>
+
+          <div>
+            <label className={labelClass}>Status</label>
+            <button
+              type="button"
+              onClick={() => setForm(prev => ({ ...prev, paid: !prev.paid }))}
+              className={`w-full py-3 rounded-xl text-sm font-semibold border-2 transition-colors ${
+                form.paid ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-amber-50 text-amber-700 border-amber-200'
+              }`}
+            >
+              {form.paid ? '✓ Pago' : '⏳ Pendente — clique para marcar como pago'}
+            </button>
           </div>
 
           <div className="flex gap-3 pt-2">
