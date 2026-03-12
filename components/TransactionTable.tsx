@@ -3,7 +3,8 @@
 import { Transaction } from '@/lib/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import PaymentBadge from '@/components/PaymentBadge'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Pencil } from 'lucide-react'
+import Link from 'next/link'
 
 interface Props {
   transactions: Transaction[]
@@ -14,7 +15,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12 text-gray-400">
-        <p className="text-lg">Nenhum lançamento encontrado</p>
+        <p className="text-lg">Nenhum lan\u00e7amento encontrado</p>
         <p className="text-sm mt-1">Adicione seu primeiro gasto!</p>
       </div>
     )
@@ -26,7 +27,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
         <thead>
           <tr className="border-b border-teal-100">
             <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data</th>
-            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descrição</th>
+            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descri\u00e7\u00e3o</th>
             <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Categoria</th>
             <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pagamento</th>
             <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
@@ -39,7 +40,6 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
               <td className="py-3 px-3 md:px-4 text-sm text-gray-500 whitespace-nowrap">{formatDate(t.date)}</td>
               <td className="py-3 px-3 md:px-4">
                 <p className="text-sm font-medium text-gray-700">{t.description}</p>
-                {/* On mobile: show category and payment below description */}
                 <div className="flex flex-wrap gap-1 mt-1 sm:hidden">
                   {t.category && (
                     <span
@@ -61,7 +61,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
                     {t.category.icon} {t.category.name}
                   </span>
                 ) : (
-                  <span className="text-sm text-gray-400">—</span>
+                  <span className="text-sm text-gray-400">\u2014</span>
                 )}
               </td>
               <td className="hidden sm:table-cell py-3 px-3 md:px-4">
@@ -70,12 +70,22 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
               <td className="py-3 px-3 md:px-4 text-right font-semibold text-teal-700 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {onDelete && (
                 <td className="py-3 px-3 md:px-4">
-                  <button
-                    onClick={() => onDelete(t.id)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 p-1 rounded"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Link
+                      href={`/lancamentos/${t.id}/editar`}
+                      className="text-teal-400 hover:text-teal-600 p-1 rounded"
+                      title="Editar"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => onDelete(t.id)}
+                      className="text-red-400 hover:text-red-600 p-1 rounded"
+                      title="Excluir"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               )}
             </tr>
