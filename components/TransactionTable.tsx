@@ -11,9 +11,10 @@ interface Props {
   onDelete?: (id: string) => void
   showEditLink?: boolean
   paymentMethods?: PaymentMethodDB[]
+  onTogglePaid?: (id: string, paid: boolean) => void
 }
 
-export default function TransactionTable({ transactions, onDelete, showEditLink = false, paymentMethods }: Props) {
+export default function TransactionTable({ transactions, onDelete, showEditLink = false, paymentMethods, onTogglePaid }: Props) {
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
@@ -36,6 +37,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
             <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoria</th>
             <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pagamento</th>
             <th className="hidden lg:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pessoa</th>
+            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pago</th>
             <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Valor</th>
             {(onDelete || showEditLink) && <th className="py-3 px-3 md:px-4"></th>}
           </tr>
@@ -91,6 +93,13 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                   </span>
                 ) : (
                   <span className="text-sm text-slate-300">—</span>
+                )}
+              </td>
+              <td className="hidden sm:table-cell py-3.5 px-3 md:px-4">
+                {t.paid ? (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 cursor-pointer hover:bg-emerald-200 transition-colors select-none" onClick={() => onTogglePaid?.(t.id, false)}>✓ Pago</span>
+                ) : (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 cursor-pointer hover:bg-amber-200 transition-colors select-none" onClick={() => onTogglePaid?.(t.id, true)}>⏳ Pendente</span>
                 )}
               </td>
               <td className="py-3.5 px-3 md:px-4 text-right font-bold text-blue-600 whitespace-nowrap">{formatCurrency(t.amount)}</td>
