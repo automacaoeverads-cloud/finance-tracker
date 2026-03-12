@@ -13,12 +13,12 @@ export type Category = {
   created_at: string
 }
 
-export type PaymentMethod = 'credito' | 'pix_debito' | 'dinheiro' | null
+export type PaymentMethod = 'credito' | 'pix' | 'dinheiro' | null
 
-export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string }[] = [
-  { value: 'credito', label: 'Crédito', icon: '💳', color: '#e8d5f5' },
-  { value: 'pix_debito', label: 'Pix / Débito', icon: '⚡', color: '#b2f0e8' },
-  { value: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#c8f5c8' },
+export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string; bg: string; text: string }[] = [
+  { value: 'pix', label: 'PIX', icon: '\u26a1', color: '#bbf7d0', bg: 'bg-green-100', text: 'text-green-700' },
+  { value: 'credito', label: 'Cr\u00e9dito', icon: '\U0001f4b3', color: '#bfdbfe', bg: 'bg-blue-100', text: 'text-blue-700' },
+  { value: 'dinheiro', label: 'Dinheiro', icon: '\U0001f4b5', color: '#fef08a', bg: 'bg-yellow-100', text: 'text-yellow-700' },
 ]
 
 export type Transaction = {
