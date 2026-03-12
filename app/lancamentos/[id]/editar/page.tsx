@@ -4,49 +4,48 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { supabase, Category, PAYMENT_METHODS } from '@/lib/supabase'
-import { CheckCircle, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+import { supabase, Category, PAYMENT_METHODS, Person } from '@/lib/supabase'
+import { CheckCircle, Pencil } from 'lucide-react'
 
 export default function EditarLancamento() {
   const router = useRouter()
-  const params = useParams()
-  const id = params?.id as string
-
+  const { id } = useParams<{ id: string }>()
   const [categories, setCategories] = useState<Category[]>([])
+  const [people, setPeople] = useState<Person[]>([])
   const [loading, setLoading] = useState(false)
-  const [loadingData, setLoadingData] = useState(true)
+  const [fetching, setFetching] = useState(true)
   const [success, setSuccess] = useState(false)
-  const [notFound, setNotFound] = useState(false)
   const [form, setForm] = useState({
     description: '',
     amount: '',
     category_id: '',
     payment_method: '',
     date: '',
+    person: '',
   })
 
   useEffect(() => {
     async function loadData() {
-      const [{ data: cats }, { data: txn, error }] = await Promise.all([
+      const [{ data: cats }, { data: ppl }, { data: txn }] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
-        supabase.from('transactions').select('*, category:categories(*)').eq('id', id).single(),
+        supabase.from('people').select('*').order('name'),
+        supabase.from('transactions').select('*').eq('id', id).single(),
       ])
       setCategories(cats || [])
-      if (error || !txn) {
-        setNotFound(true)
-      } else {
+      setPeople(ppl || [])
+      if (txn) {
         setForm({
           description: txn.description,
           amount: String(txn.amount),
           category_id: txn.category_id || '',
           payment_method: txn.payment_method || '',
           date: txn.date,
+          person: txn.person || '',
         })
       }
-      setLoadingData(false)
+      setFetching(false)
     }
-    if (id) loadData()
+    loadData()
   }, [id])
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -57,70 +56,67 @@ export default function EditarLancamento() {
     e.preventDefault()
     if (!form.description || !form.amount || !form.date) return
     setLoading(true)
-    const { error } = await supabase.from('transactions').update({
-      description: form.description,
-      amount: parseFloat(form.amount),
-      category_id: form.category_id || null,
-      payment_method: form.payment_method || null,
-      date: form.date,
-    }).eq('id', id)
+    const { error } = await supabase
+      .from('transactions')
+      .update({
+        description: form.description,
+        amount: parseFloat(form.amount),
+        category_id: form.category_id || null,
+        payment_method: form.payment_method || null,
+        date: form.date,
+        person: form.person || null,
+      })
+      .eq('id', id)
     setLoading(false)
     if (!error) {
       setSuccess(true)
-      setTimeout(() => {
-        router.push('/lancamentos')
-      }, 1000)
+      setTimeout(() => router.push('/lancamentos'), 1200)
     }
   }
 
-  if (loadingData) {
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
+  const labelClass = "block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2"
+
+  if (fetching) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-teal-300 border-t-teal-500 rounded-full animate-spin" />
-      </div>
-    )
-  }
-
-  if (notFound) {
-    return (
-      <div className="max-w-xl mx-auto text-center py-16">
-        <p className="text-gray-400 text-lg">Lançamento não encontrado.</p>
-        <Link href="/lancamentos" className="mt-4 inline-flex items-center gap-2 text-teal-500 hover:text-teal-700 text-sm font-medium">
-          <ArrowLeft className="w-4 h-4" /> Voltar para lançamentos
-        </Link>
+        <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/lancamentos" className="text-teal-500 hover:text-teal-700">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h2 className="text-2xl font-bold text-teal-900">Editar Gasto</h2>
-          <p className="text-sm text-gray-400 mt-1">Atualize as informações do lançamento</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-slate-800">Editar Gasto</h1>
+        <p className="text-sm text-slate-400 mt-0.5">Atualize os dados do lançamento</p>
       </div>
 
-      <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-teal-50">
+      <div className="bg-white rounded-2xl p-8 border border-slate-100"
+        style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
+        <div className="flex items-center gap-2.5 mb-6">
+          <span className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
+            <Pencil className="w-4 h-4 text-blue-600" />
+          </span>
+          <h2 className="font-semibold text-slate-700">Dados do Gasto</h2>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-teal-800 mb-2">Descrição *</label>
+            <label className={labelClass}>Descrição *</label>
             <input
               name="description"
               value={form.description}
               onChange={handleChange}
               placeholder="Ex: Almoço no restaurante"
-              className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+              className={inputClass}
               required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Valor (R$) *</label>
+              <label className={labelClass}>Valor (R$) *</label>
               <input
                 name="amount"
                 type="number"
@@ -129,32 +125,27 @@ export default function EditarLancamento() {
                 value={form.amount}
                 onChange={handleChange}
                 placeholder="0,00"
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+                className={inputClass}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Data *</label>
+              <label className={labelClass}>Data *</label>
               <input
                 name="date"
                 type="date"
                 value={form.date}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+                className={inputClass}
                 required
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Categoria</label>
-              <select
-                name="category_id"
-                value={form.category_id}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
-              >
+              <label className={labelClass}>Categoria</label>
+              <select name="category_id" value={form.category_id} onChange={handleChange} className={inputClass}>
                 <option value="">Sem categoria</option>
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
@@ -162,13 +153,8 @@ export default function EditarLancamento() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Forma de pagamento</label>
-              <select
-                name="payment_method"
-                value={form.payment_method}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
-              >
+              <label className={labelClass}>Pagamento</label>
+              <select name="payment_method" value={form.payment_method} onChange={handleChange} className={inputClass}>
                 <option value="">Não informado</option>
                 {PAYMENT_METHODS.map(pm => (
                   <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
@@ -177,18 +163,28 @@ export default function EditarLancamento() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div>
+            <label className={labelClass}>Quem gastou</label>
+            <select name="person" value={form.person} onChange={handleChange} className={inputClass}>
+              <option value="">Não informado</option>
+              {people.map(p => (
+                <option key={p.id} value={p.name}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={() => router.push('/lancamentos')}
-              className="flex-1 py-3 rounded-xl border border-teal-200 text-teal-700 text-sm font-medium hover:bg-teal-50 transition-colors"
+              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading || success}
-              className="flex-1 py-3 rounded-xl bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm"
             >
               {success ? (
                 <><CheckCircle className="w-4 h-4" /> Salvo!</>

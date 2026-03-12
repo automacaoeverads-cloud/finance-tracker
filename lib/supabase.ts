@@ -13,13 +13,30 @@ export type Category = {
   created_at: string
 }
 
-export type PaymentMethod = 'credito' | 'pix' | 'dinheiro' | null
+export type PaymentMethod = 'credito' | 'pix_debito' | 'dinheiro' | null
 
-export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string; bg: string; text: string }[] = [
-  { value: 'pix', label: 'PIX', icon: '⚡', color: '#bbf7d0', bg: 'bg-green-100', text: 'text-green-700' },
-  { value: 'credito', label: 'Crédito', icon: '💳', color: '#bfdbfe', bg: 'bg-blue-100', text: 'text-blue-700' },
-  { value: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#fef08a', bg: 'bg-yellow-100', text: 'text-yellow-700' },
+export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string }[] = [
+  { value: 'credito', label: 'Crédito', icon: '💳', color: '#e8d5f5' },
+  { value: 'pix_debito', label: 'Pix / Débito', icon: '⚡', color: '#b2f0e8' },
+  { value: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#c8f5c8' },
 ]
+
+export type Person = {
+  id: string
+  name: string
+  created_at: string
+}
+
+export const PERSON_COLORS: Record<string, string> = {
+  Arthur: '#b2f0e8',
+  Pedro: '#c8e6f5',
+  Luana: '#f5d5e8',
+}
+
+export function getPersonColor(name: string | null | undefined): string {
+  if (!name) return '#e5e7eb'
+  return PERSON_COLORS[name] || '#e8d5f5'
+}
 
 export type Transaction = {
   id: string
@@ -30,4 +47,5 @@ export type Transaction = {
   payment_method: PaymentMethod
   date: string
   created_at: string
+  person?: string | null
 }

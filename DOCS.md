@@ -49,6 +49,7 @@ GitHub → Vercel (deploy automático)
 | `description` | text | Descrição do gasto |
 | `category_id` | uuid (FK) | Referência à categoria (nullable) |
 | `date` | date | Data do gasto |
+| `payment_method` | text | Forma de pagamento: `pix`, `credito`, `dinheiro` (default: `pix`) |
 | `created_at` | timestamptz | Data de criação do registro |
 
 ### Categorias padrão criadas
@@ -75,8 +76,11 @@ finance-tracker/
 │   ├── page.tsx                # Dashboard (/)
 │   ├── lancamentos/
 │   │   ├── page.tsx            # Lista de lançamentos (/lancamentos)
-│   │   └── novo/
-│   │       └── page.tsx        # Formulário novo gasto (/lancamentos/novo)
+│   │   ├── novo/
+│   │   │   └── page.tsx        # Formulário novo gasto (/lancamentos/novo)
+│   │   └── [id]/
+│   │       └── editar/
+│   │           └── page.tsx    # Formulário editar gasto (/lancamentos/[id]/editar)
 │   ├── categorias/
 │   │   └── page.tsx            # Gerenciar categorias (/categorias)
 │   └── relatorios/
@@ -113,16 +117,24 @@ Configuradas no Vercel automaticamente. Para rodar local, criar `.env.local` com
 - Cards de estatística: gasto do mês, total geral, média por lançamento, nº de categorias
 - Gráfico de pizza: distribuição por categoria do mês atual
 - Gráfico de área: evolução mensal dos últimos 6 meses
+- **Seção "Gastos por Forma de Pagamento"**: 3 cards (PIX 💳 verde, Crédito 💳 azul, Dinheiro 💵 amarelo) com totais do mês atual
 - Tabela com os 5 últimos lançamentos
 
 ### Lançamentos (`/lancamentos`)
 - Tabela completa de todos os gastos
+- Coluna **Pagamento** com badge colorido: verde (pix), azul (crédito), amarelo (dinheiro)
 - Filtros: busca por descrição, categoria, mês, valor mínimo/máximo
-- Botão de excluir (aparece no hover)
+- Botão de editar ✏️ e excluir 🗑️ (aparecem no hover)
 
 ### Novo Gasto (`/lancamentos/novo`)
-- Campos: descrição, valor, data, categoria
+- Campos: descrição, valor, data, categoria, **forma de pagamento** (PIX / Cartão de Crédito / Dinheiro)
+- Default: PIX
 - Feedback visual de sucesso após salvar
+
+### Editar Gasto (`/lancamentos/[id]/editar`)
+- Mesmos campos do formulário de novo gasto
+- Carrega dados do gasto via GET no Supabase
+- Salva via PATCH e redireciona para `/lancamentos`
 
 ### Categorias (`/categorias`)
 - Cards de todas as categorias
@@ -163,7 +175,14 @@ GET /transactions?select=*,category:categories(*)&order=date.desc
 ### Inserir lançamento
 ```bash
 POST /transactions
-Body: { "amount": 45.00, "description": "Restaurante", "category_id": "uuid", "date": "2026-03-11" }
+Body: { "amount": 45.00, "description": "Restaurante", "category_id": "uuid", "date": "2026-03-11", "payment_method": "pix" }
+Header: Prefer: return=representation
+```
+
+### Atualizar lançamento
+```bash
+PATCH /transactions?id=eq.<uuid>
+Body: { "amount": 45.00, "description": "...", "category_id": "uuid", "date": "2026-03-11", "payment_method": "credito" }
 Header: Prefer: return=representation
 ```
 

@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase, Category } from '@/lib/supabase'
-import { Trash2, Plus, Pencil } from 'lucide-react'
+import { Trash2, Plus, Pencil, Tag, X, Check } from 'lucide-react'
 import { CATEGORY_COLORS } from '@/lib/utils'
 
 const ICONS = ['🍽️', '🚗', '🏠', '🎮', '🛍️', '💊', '✈️', '📚', '💼', '🎵', '🐾', '💡', '📱', '🏋️', '☕']
@@ -14,7 +14,7 @@ export default function Categorias() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', color: '#b2f0e8', icon: '🍽️' })
+  const [form, setForm] = useState({ name: '', color: '#BFDBFE', icon: '🍽️' })
 
   useEffect(() => { loadCategories() }, [])
 
@@ -31,7 +31,7 @@ export default function Categorias() {
     } else {
       await supabase.from('categories').insert(form)
     }
-    setForm({ name: '', color: '#b2f0e8', icon: '🍽️' })
+    setForm({ name: '', color: '#BFDBFE', icon: '🍽️' })
     setShowForm(false)
     setEditingId(null)
     loadCategories()
@@ -49,59 +49,94 @@ export default function Categorias() {
     setShowForm(true)
   }
 
+  function cancelForm() {
+    setShowForm(false)
+    setEditingId(null)
+    setForm({ name: '', color: '#BFDBFE', icon: '🍽️' })
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-teal-900">Categorias</h2>
-          <p className="text-sm text-gray-400 mt-1">{categories.length} categorias</p>
+          <h1 className="text-2xl font-bold text-slate-800">Categorias</h1>
+          <p className="text-sm text-slate-400 mt-0.5">
+            <span className="font-semibold text-slate-600">{categories.length}</span> categorias ativas
+          </p>
         </div>
         <button
-          onClick={() => { setShowForm(true); setEditingId(null); setForm({ name: '', color: '#b2f0e8', icon: '🍽️' }) }}
-          className="flex items-center gap-2 bg-teal-500 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-teal-600 transition-colors shadow-sm"
+          onClick={() => { setShowForm(true); setEditingId(null); setForm({ name: '', color: '#BFDBFE', icon: '🍽️' }) }}
+          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           Nova Categoria
         </button>
       </div>
 
+      {/* Form */}
       {showForm && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-100">
-          <h3 className="font-semibold text-teal-800 mb-4">{editingId ? 'Editar' : 'Nova'} Categoria</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-2xl p-6 border border-slate-100"
+          style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-semibold text-slate-700 flex items-center gap-2">
+              <span className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                <Tag className="w-3.5 h-3.5 text-blue-500" />
+              </span>
+              {editingId ? 'Editar Categoria' : 'Nova Categoria'}
+            </h3>
+            <button onClick={cancelForm} className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {/* Nome */}
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">Nome</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Nome</label>
               <input
                 value={form.name}
                 onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
                 placeholder="Ex: Alimentação"
-                className="w-full px-4 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
               />
             </div>
+
+            {/* Cor */}
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">Cor</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Cor</label>
               <div className="flex flex-wrap gap-2">
                 {Object.keys(CATEGORY_COLORS).map(color => (
                   <button
                     key={color}
                     onClick={() => setForm(p => ({ ...p, color }))}
-                    className="w-7 h-7 rounded-full border-2 transition-transform hover:scale-110"
+                    className="w-7 h-7 rounded-full border-2 transition-all hover:scale-110 relative"
                     style={{
                       backgroundColor: color,
-                      borderColor: form.color === color ? '#0d9488' : 'transparent'
+                      borderColor: form.color === color ? '#3B82F6' : 'transparent',
                     }}
-                  />
+                  >
+                    {form.color === color && (
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px]">✓</span>
+                    )}
+                  </button>
                 ))}
               </div>
             </div>
+
+            {/* Ícone */}
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-2">Ícone</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Ícone</label>
               <div className="flex flex-wrap gap-1">
                 {ICONS.map(icon => (
                   <button
                     key={icon}
                     onClick={() => setForm(p => ({ ...p, icon }))}
-                    className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center transition-colors ${form.icon === icon ? 'bg-teal-100' : 'hover:bg-teal-50'}`}
+                    className={`w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all ${
+                      form.icon === icon
+                        ? 'bg-blue-100 ring-2 ring-blue-300'
+                        : 'hover:bg-slate-100'
+                    }`}
                   >
                     {icon}
                   </button>
@@ -109,40 +144,73 @@ export default function Categorias() {
               </div>
             </div>
           </div>
-          <div className="flex gap-3 mt-4">
-            <button onClick={() => { setShowForm(false); setEditingId(null) }} className="px-4 py-2 rounded-xl border border-teal-200 text-sm text-teal-700 hover:bg-teal-50">Cancelar</button>
-            <button onClick={handleSave} className="px-6 py-2 rounded-xl bg-teal-500 text-white text-sm font-medium hover:bg-teal-600">Salvar</button>
+
+          <div className="flex gap-3 mt-5 pt-4 border-t border-slate-100">
+            <button
+              onClick={cancelForm}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-sm text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-5 py-2 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-sm"
+            >
+              <Check className="w-4 h-4" />
+              Salvar
+            </button>
           </div>
         </div>
       )}
 
+      {/* Grid */}
       {loading ? (
-        <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-teal-300 border-t-teal-500 rounded-full animate-spin" />
+        <div className="flex justify-center py-16">
+          <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map(cat => (
-            <div key={cat.id} className="bg-white rounded-2xl p-5 shadow-sm border border-teal-50 flex items-center justify-between group hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: cat.color + '80' }}>
+            <div
+              key={cat.id}
+              className="bg-white rounded-2xl p-5 border border-slate-100 flex items-center justify-between group hover:shadow-md transition-all duration-200"
+              style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
+            >
+              <div className="flex items-center gap-3.5">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                  style={{ backgroundColor: cat.color + '50' }}
+                >
                   {cat.icon}
                 </div>
-                <span className="font-medium text-teal-900">{cat.name}</span>
+                <div>
+                  <p className="font-semibold text-slate-700 text-sm">{cat.name}</p>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">Categoria</p>
+                </div>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => startEdit(cat)} className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg">
-                  <Pencil className="w-4 h-4" />
+                <button
+                  onClick={() => startEdit(cat)}
+                  className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
                 </button>
-                <button onClick={() => handleDelete(cat.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg">
-                  <Trash2 className="w-4 h-4" />
+                <button
+                  onClick={() => handleDelete(cat.id)}
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
           ))}
           {categories.length === 0 && (
-            <div className="col-span-3 text-center py-12 text-gray-400">
-              <p>Nenhuma categoria ainda. Crie a primeira!</p>
+            <div className="col-span-3 text-center py-16">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Tag className="w-6 h-6 text-blue-300" />
+              </div>
+              <p className="text-slate-500 font-semibold">Nenhuma categoria ainda</p>
+              <p className="text-sm text-slate-400 mt-1">Crie a primeira para organizar seus gastos!</p>
             </div>
           )}
         </div>

@@ -2,16 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg-primary: #f0fdfa;
-  --bg-secondary: #ffffff;
-  --accent: #14b8a6;
-  --accent-light: #b2f0e8;
-  --text-primary: #134e4a;
-  --text-secondary: #6b7280;
-  --border: #ccfbf1;
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --accent: #3B82F6;
+  --accent-light: #BFDBFE;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --border: #E2E8F0;
+  --sidebar-w: 260px;
 }
 
 * {
@@ -25,17 +26,35 @@ body {
   color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Scrollbar refinada */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f0fdfa;
+  background: #F1F5F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #99f6e4;
-  border-radius: 3px;
+  background: #BFDBFE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #93C5FD;
+}
+
+/* Focus ring global */
+:focus-visible {
+  outline: 2px solid #93C5FD;
+  outline-offset: 2px;
+}
+
+/* Input base */
+input, select, textarea {
+  font-family: inherit;
 }

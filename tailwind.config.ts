@@ -9,32 +9,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        teal: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+        brand: {
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          300: '#93C5FD',
+          400: '#60A5FA',
+          500: '#3B82F6',
+          600: '#2563EB',
+          700: '#1D4ED8',
+          800: '#1E40AF',
+          900: '#1E3A8A',
         },
         pastel: {
-          teal: '#b2f0e8',
-          green: '#c8f5c8',
-          blue: '#c8e6f5',
-          purple: '#e8d5f5',
-          pink: '#f5d5e8',
-          yellow: '#f5f0c8',
-          orange: '#f5e0c8',
-          red: '#f5c8c8',
+          blue: '#BFDBFE',
+          indigo: '#C7D2FE',
+          purple: '#E9D5FF',
+          pink: '#FBCFE8',
+          green: '#BBF7D0',
+          yellow: '#FEF08A',
+          orange: '#FED7AA',
+          red: '#FECACA',
+          teal: '#99F6E4',
         }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      boxShadow: {
+        card: '0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.04)',
+        'card-md': '0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05)',
+      }
     },
   },
   plugins: [],

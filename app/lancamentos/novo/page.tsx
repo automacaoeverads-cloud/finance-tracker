@@ -4,12 +4,13 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase, Category, PAYMENT_METHODS } from '@/lib/supabase'
-import { CheckCircle } from 'lucide-react'
+import { supabase, Category, PAYMENT_METHODS, Person } from '@/lib/supabase'
+import { CheckCircle, PlusCircle } from 'lucide-react'
 
 export default function NovoLancamento() {
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
+  const [people, setPeople] = useState<Person[]>([])
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({
@@ -18,11 +19,16 @@ export default function NovoLancamento() {
     category_id: '',
     payment_method: '',
     date: new Date().toISOString().split('T')[0],
+    person: '',
   })
 
   useEffect(() => {
-    supabase.from('categories').select('*').order('name').then(({ data }) => {
-      setCategories(data || [])
+    Promise.all([
+      supabase.from('categories').select('*').order('name'),
+      supabase.from('people').select('*').order('name'),
+    ]).then(([{ data: cats }, { data: ppl }]) => {
+      setCategories(cats || [])
+      setPeople(ppl || [])
     })
   }, [])
 
@@ -40,41 +46,53 @@ export default function NovoLancamento() {
       category_id: form.category_id || null,
       payment_method: form.payment_method || null,
       date: form.date,
+      person: form.person || null,
     })
     setLoading(false)
     if (!error) {
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
-        setForm({ description: '', amount: '', category_id: '', payment_method: '', date: new Date().toISOString().split('T')[0] })
+        setForm({ description: '', amount: '', category_id: '', payment_method: '', date: new Date().toISOString().split('T')[0], person: '' })
       }, 1500)
     }
   }
 
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
+  const labelClass = "block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2"
+
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-teal-900">Novo Gasto</h2>
-        <p className="text-sm text-gray-400 mt-1">Registre um novo lançamento</p>
+        <h1 className="text-2xl font-bold text-slate-800">Novo Gasto</h1>
+        <p className="text-sm text-slate-400 mt-0.5">Registre um novo lançamento</p>
       </div>
 
-      <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-teal-50">
+      <div className="bg-white rounded-2xl p-8 border border-slate-100"
+        style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
+        <div className="flex items-center gap-2.5 mb-6">
+          <span className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
+            <PlusCircle className="w-4 h-4 text-blue-600" />
+          </span>
+          <h2 className="font-semibold text-slate-700">Dados do Gasto</h2>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-teal-800 mb-2">Descrição *</label>
+            <label className={labelClass}>Descrição *</label>
             <input
               name="description"
               value={form.description}
               onChange={handleChange}
               placeholder="Ex: Almoço no restaurante"
-              className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+              className={inputClass}
               required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Valor (R$) *</label>
+              <label className={labelClass}>Valor (R$) *</label>
               <input
                 name="amount"
                 type="number"
@@ -83,32 +101,27 @@ export default function NovoLancamento() {
                 value={form.amount}
                 onChange={handleChange}
                 placeholder="0,00"
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+                className={inputClass}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Data *</label>
+              <label className={labelClass}>Data *</label>
               <input
                 name="date"
                 type="date"
                 value={form.date}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+                className={inputClass}
                 required
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Categoria</label>
-              <select
-                name="category_id"
-                value={form.category_id}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
-              >
+              <label className={labelClass}>Categoria</label>
+              <select name="category_id" value={form.category_id} onChange={handleChange} className={inputClass}>
                 <option value="">Sem categoria</option>
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
@@ -116,13 +129,8 @@ export default function NovoLancamento() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-teal-800 mb-2">Forma de pagamento</label>
-              <select
-                name="payment_method"
-                value={form.payment_method}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
-              >
+              <label className={labelClass}>Pagamento</label>
+              <select name="payment_method" value={form.payment_method} onChange={handleChange} className={inputClass}>
                 <option value="">Não informado</option>
                 {PAYMENT_METHODS.map(pm => (
                   <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
@@ -131,18 +139,28 @@ export default function NovoLancamento() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div>
+            <label className={labelClass}>Quem gastou</label>
+            <select name="person" value={form.person} onChange={handleChange} className={inputClass}>
+              <option value="">Não informado</option>
+              {people.map(p => (
+                <option key={p.id} value={p.name}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={() => router.push('/lancamentos')}
-              className="flex-1 py-3 rounded-xl border border-teal-200 text-teal-700 text-sm font-medium hover:bg-teal-50 transition-colors"
+              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading || success}
-              className="flex-1 py-3 rounded-xl bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm"
             >
               {success ? (
                 <><CheckCircle className="w-4 h-4" /> Salvo!</>

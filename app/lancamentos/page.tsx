@@ -3,15 +3,16 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category, PAYMENT_METHODS } from '@/lib/supabase'
+import { supabase, Transaction, Category, PAYMENT_METHODS, Person } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/utils'
 import TransactionTable from '@/components/TransactionTable'
-import { Search, Filter, Plus } from 'lucide-react'
+import { Search, SlidersHorizontal, Plus } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Lancamentos() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [people, setPeople] = useState<Person[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
@@ -19,17 +20,20 @@ export default function Lancamentos() {
   const [filterMonth, setFilterMonth] = useState('')
   const [filterMinValue, setFilterMinValue] = useState('')
   const [filterMaxValue, setFilterMaxValue] = useState('')
+  const [filterPerson, setFilterPerson] = useState('')
 
   useEffect(() => { loadData() }, [])
 
   async function loadData() {
     setLoading(true)
-    const [{ data: cats }, { data: txns }] = await Promise.all([
+    const [{ data: cats }, { data: txns }, { data: ppl }] = await Promise.all([
       supabase.from('categories').select('*').order('name'),
       supabase.from('transactions').select('*, category:categories(*)').order('date', { ascending: false }),
+      supabase.from('people').select('*').order('name'),
     ])
     setCategories(cats || [])
     setTransactions(txns || [])
+    setPeople(ppl || [])
     setLoading(false)
   }
 
@@ -46,21 +50,26 @@ export default function Lancamentos() {
     if (filterMonth && !t.date.startsWith(filterMonth)) return false
     if (filterMinValue && t.amount < parseFloat(filterMinValue)) return false
     if (filterMaxValue && t.amount > parseFloat(filterMaxValue)) return false
+    if (filterPerson && t.person !== filterPerson) return false
     return true
   })
 
   const total = filtered.reduce((acc, t) => acc + t.amount, 0)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-teal-900">Lançamentos</h2>
-          <p className="text-sm text-gray-400 mt-1">{filtered.length} registros · {formatCurrency(total)}</p>
+          <h1 className="text-2xl font-bold text-slate-800">Lançamentos</h1>
+          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+            <span className="text-slate-600 font-semibold">{filtered.length}</span> registros ·{' '}
+            <span className="text-blue-600 font-semibold">{formatCurrency(total)}</span>
+          </p>
         </div>
         <Link
           href="/lancamentos/novo"
-          className="flex items-center gap-2 bg-teal-500 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-teal-600 transition-colors shadow-sm"
+          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           Novo Gasto
@@ -68,26 +77,29 @@ export default function Lancamentos() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-teal-50">
+      <div className="bg-white rounded-2xl p-5 border border-slate-100"
+        style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         <div className="flex items-center gap-2 mb-4">
-          <Filter className="w-4 h-4 text-teal-500" />
-          <span className="text-sm font-semibold text-teal-800">Filtros</span>
+          <span className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-500" />
+          </span>
+          <span className="text-sm font-semibold text-slate-700">Filtros</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 gap-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-3">
           <div className="relative xl:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Buscar descrição..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
             />
           </div>
           <select
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-600"
           >
             <option value="">Todas categorias</option>
             {categories.map(c => (
@@ -97,18 +109,28 @@ export default function Lancamentos() {
           <select
             value={filterPayment}
             onChange={e => setFilterPayment(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-600"
           >
             <option value="">Todos pagamentos</option>
             {PAYMENT_METHODS.map(pm => (
               <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
             ))}
           </select>
+          <select
+            value={filterPerson}
+            onChange={e => setFilterPerson(e.target.value)}
+            className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-600"
+          >
+            <option value="">Todas as pessoas</option>
+            {people.map(p => (
+              <option key={p.id} value={p.name}>{p.name}</option>
+            ))}
+          </select>
           <input
             type="month"
             value={filterMonth}
             onChange={e => setFilterMonth(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-600"
           />
           <div className="flex gap-2">
             <input
@@ -116,27 +138,28 @@ export default function Lancamentos() {
               placeholder="R$ min"
               value={filterMinValue}
               onChange={e => setFilterMinValue(e.target.value)}
-              className="w-1/2 px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60"
             />
             <input
               type="number"
               placeholder="R$ max"
               value={filterMaxValue}
               onChange={e => setFilterMaxValue(e.target.value)}
-              className="w-1/2 px-3 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
+              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60"
             />
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+      <div className="bg-white rounded-2xl p-6 border border-slate-100"
+        style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         {loading ? (
           <div className="flex items-center justify-center h-32">
-            <div className="w-8 h-8 border-4 border-teal-300 border-t-teal-500 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
           </div>
         ) : (
-          <TransactionTable transactions={filtered} onDelete={handleDelete} />
+          <TransactionTable transactions={filtered} onDelete={handleDelete} showEditLink />
         )}
       </div>
     </div>
