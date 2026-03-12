@@ -7,7 +7,7 @@ import { supabase, Transaction, Category, PaymentMethodDB, getPersonColor, Perso
 import { formatCurrency, formatMonth } from '@/lib/utils'
 import StatCard from '@/components/StatCard'
 import TransactionTable from '@/components/TransactionTable'
-import { CategoryPieChart, MonthlyAreaChart, PaymentBarChart } from '@/components/Charts'
+import { CategoryPieChart, MonthlyAreaChart, PaymentBarChart, PaidStatusChart } from '@/components/Charts'
 import { TrendingDown, Wallet, Tag, Calendar, ArrowRight, SlidersHorizontal, X } from 'lucide-react'
 import Link from 'next/link'
 
@@ -96,6 +96,21 @@ export default function Dashboard() {
     color: pm.color,
     icon: pm.icon,
   })).filter(d => d.value > 0)
+
+  const paidData = [
+    {
+      name: '✓ Pagos',
+      value: filtered.filter(t => t.paid).length,
+      amount: filtered.filter(t => t.paid).reduce((a, t) => a + t.amount, 0),
+      color: '#6ee7b7',
+    },
+    {
+      name: '⏳ Pendentes',
+      value: filtered.filter(t => !t.paid).length,
+      amount: filtered.filter(t => !t.paid).reduce((a, t) => a + t.amount, 0),
+      color: '#fcd34d',
+    },
+  ]
 
   const recent = filtered.slice(0, 5)
 
@@ -254,6 +269,23 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Status de Pagamento */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-100" style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
+        <h3 className="text-sm font-semibold text-slate-700 mb-1">Status de Pagamento</h3>
+        <p className="text-xs text-slate-400 mb-4">Pagas vs Pendentes no período</p>
+        <PaidStatusChart data={paidData} />
+        <div className="mt-3 pt-3 border-t border-slate-50 grid grid-cols-2 gap-3">
+          <div className="text-center">
+            <p className="text-lg font-bold text-emerald-600">{formatCurrency(paidData[0].amount)}</p>
+            <p className="text-xs text-slate-400">{paidData[0].value} pagas</p>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-bold text-amber-500">{formatCurrency(paidData[1].amount)}</p>
+            <p className="text-xs text-slate-400">{paidData[1].value} pendentes</p>
+          </div>
+        </div>
+      </div>
 
       {/* Person breakdown — só mostrar se NÃO estiver filtrado por pessoa */}
       {!filterPerson && personData.length > 0 && (
