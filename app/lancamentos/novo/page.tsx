@@ -58,7 +58,7 @@ export default function NovoLancamento() {
         <p className="text-sm text-gray-400 mt-1">Registre um novo lançamento</p>
       </div>
 
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-teal-50">
+      <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-teal-50">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-teal-800 mb-2">Descrição *</label>
@@ -72,7 +72,7 @@ export default function NovoLancamento() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-teal-800 mb-2">Valor (R$) *</label>
               <input
@@ -100,7 +100,7 @@ export default function NovoLancamento() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-teal-800 mb-2">Categoria</label>
               <select
@@ -131,7 +131,7 @@ export default function NovoLancamento() {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               type="button"
               onClick={() => router.push('/lancamentos')}
