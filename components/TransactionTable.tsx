@@ -15,7 +15,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12 text-gray-400">
-        <p className="text-lg">Nenhum lan\u00e7amento encontrado</p>
+        <p className="text-lg">Nenhum lançamento encontrado</p>
         <p className="text-sm mt-1">Adicione seu primeiro gasto!</p>
       </div>
     )
@@ -27,7 +27,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
         <thead>
           <tr className="border-b border-teal-100">
             <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data</th>
-            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descri\u00e7\u00e3o</th>
+            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Descrição</th>
             <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Categoria</th>
             <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pagamento</th>
             <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Valor</th>
@@ -61,7 +61,7 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
                     {t.category.icon} {t.category.name}
                   </span>
                 ) : (
-                  <span className="text-sm text-gray-400">\u2014</span>
+                  <span className="text-sm text-gray-400">—</span>
                 )}
               </td>
               <td className="hidden sm:table-cell py-3 px-3 md:px-4">
@@ -70,17 +70,17 @@ export default function TransactionTable({ transactions, onDelete }: Props) {
               <td className="py-3 px-3 md:px-4 text-right font-semibold text-teal-700 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {onDelete && (
                 <td className="py-3 px-3 md:px-4">
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <Link
                       href={`/lancamentos/${t.id}/editar`}
-                      className="text-teal-400 hover:text-teal-600 p-1 rounded"
+                      className="text-teal-400 hover:text-teal-600 p-2 md:p-1 rounded min-w-[44px] md:min-w-0 flex items-center justify-center"
                       title="Editar"
                     >
                       <Pencil className="w-4 h-4" />
                     </Link>
                     <button
                       onClick={() => onDelete(t.id)}
-                      className="text-red-400 hover:text-red-600 p-1 rounded"
+                      className="text-red-400 hover:text-red-600 p-2 md:p-1 rounded min-w-[44px] md:min-w-0 flex items-center justify-center"
                       title="Excluir"
                     >
                       <Trash2 className="w-4 h-4" />
