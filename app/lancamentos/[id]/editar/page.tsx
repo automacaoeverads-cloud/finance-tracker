@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { supabase, Category, PAYMENT_METHODS, Person } from '@/lib/supabase'
+import { supabase, Category, PaymentMethodDB, Person } from '@/lib/supabase'
 import { CheckCircle, Pencil } from 'lucide-react'
 
 export default function EditarLancamento() {
@@ -12,35 +12,30 @@ export default function EditarLancamento() {
   const { id } = useParams<{ id: string }>()
   const [categories, setCategories] = useState<Category[]>([])
   const [people, setPeople] = useState<Person[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({
-    description: '',
-    amount: '',
-    category_id: '',
-    payment_method: '',
-    date: '',
-    person: '',
+    description: '', amount: '', category_id: '', payment_method: '', date: '', person: '',
   })
 
   useEffect(() => {
     async function loadData() {
-      const [{ data: cats }, { data: ppl }, { data: txn }] = await Promise.all([
+      const [{ data: cats }, { data: ppl }, { data: pms }, { data: txn }] = await Promise.all([
         supabase.from('categories').select('*').order('name'),
         supabase.from('people').select('*').order('name'),
+        supabase.from('payment_methods').select('*').order('name'),
         supabase.from('transactions').select('*').eq('id', id).single(),
       ])
       setCategories(cats || [])
       setPeople(ppl || [])
+      setPaymentMethods(pms || [])
       if (txn) {
         setForm({
-          description: txn.description,
-          amount: String(txn.amount),
-          category_id: txn.category_id || '',
-          payment_method: txn.payment_method || '',
-          date: txn.date,
-          person: txn.person || '',
+          description: txn.description, amount: String(txn.amount),
+          category_id: txn.category_id || '', payment_method: txn.payment_method || '',
+          date: txn.date, person: txn.person || '',
         })
       }
       setFetching(false)
@@ -56,34 +51,23 @@ export default function EditarLancamento() {
     e.preventDefault()
     if (!form.description || !form.amount || !form.date) return
     setLoading(true)
-    const { error } = await supabase
-      .from('transactions')
-      .update({
-        description: form.description,
-        amount: parseFloat(form.amount),
-        category_id: form.category_id || null,
-        payment_method: form.payment_method || null,
-        date: form.date,
-        person: form.person || null,
-      })
-      .eq('id', id)
+    const { error } = await supabase.from('transactions').update({
+      description: form.description, amount: parseFloat(form.amount),
+      category_id: form.category_id || null, payment_method: form.payment_method || null,
+      date: form.date, person: form.person || null,
+    }).eq('id', id)
     setLoading(false)
-    if (!error) {
-      setSuccess(true)
-      setTimeout(() => router.push('/lancamentos'), 1200)
-    }
+    if (!error) { setSuccess(true); setTimeout(() => router.push('/lancamentos'), 1200) }
   }
 
   const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
   const labelClass = "block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2"
 
-  if (fetching) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
-      </div>
-    )
-  }
+  if (fetching) return (
+    <div className="flex items-center justify-center h-64">
+      <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+    </div>
+  )
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
@@ -104,41 +88,20 @@ export default function EditarLancamento() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className={labelClass}>Descrição *</label>
-            <input
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Ex: Almoço no restaurante"
-              className={inputClass}
-              required
-            />
+            <input name="description" value={form.description} onChange={handleChange}
+              placeholder="Ex: Almoço no restaurante" className={inputClass} required />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Valor (R$) *</label>
-              <input
-                name="amount"
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={form.amount}
-                onChange={handleChange}
-                placeholder="0,00"
-                className={inputClass}
-                required
-              />
+              <input name="amount" type="number" step="0.01" min="0.01" value={form.amount}
+                onChange={handleChange} placeholder="0,00" className={inputClass} required />
             </div>
             <div>
               <label className={labelClass}>Data *</label>
-              <input
-                name="date"
-                type="date"
-                value={form.date}
-                onChange={handleChange}
-                className={inputClass}
-                required
-              />
+              <input name="date" type="date" value={form.date} onChange={handleChange}
+                className={inputClass} required />
             </div>
           </div>
 
@@ -147,18 +110,21 @@ export default function EditarLancamento() {
               <label className={labelClass}>Categoria</label>
               <select name="category_id" value={form.category_id} onChange={handleChange} className={inputClass}>
                 <option value="">Sem categoria</option>
-                {categories.map(c => (
-                  <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-                ))}
+                {categories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
               </select>
             </div>
             <div>
               <label className={labelClass}>Pagamento</label>
               <select name="payment_method" value={form.payment_method} onChange={handleChange} className={inputClass}>
                 <option value="">Não informado</option>
-                {PAYMENT_METHODS.map(pm => (
-                  <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
-                ))}
+                {paymentMethods.length > 0
+                  ? paymentMethods.map(pm => <option key={pm.id} value={pm.name}>{pm.icon} {pm.name}</option>)
+                  : <>
+                      <option value="Crédito">💳 Crédito</option>
+                      <option value="Pix / Débito">⚡ Pix / Débito</option>
+                      <option value="Dinheiro">💵 Dinheiro</option>
+                    </>
+                }
               </select>
             </div>
           </div>
@@ -167,32 +133,20 @@ export default function EditarLancamento() {
             <label className={labelClass}>Quem gastou</label>
             <select name="person" value={form.person} onChange={handleChange} className={inputClass}>
               <option value="">Não informado</option>
-              {people.map(p => (
-                <option key={p.id} value={p.name}>{p.name}</option>
-              ))}
+              {people.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
             </select>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => router.push('/lancamentos')}
-              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
-            >
+            <button type="button" onClick={() => router.push('/lancamentos')}
+              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors">
               Cancelar
             </button>
-            <button
-              type="submit"
-              disabled={loading || success}
-              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm"
-            >
-              {success ? (
-                <><CheckCircle className="w-4 h-4" /> Salvo!</>
-              ) : loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                'Salvar Alterações'
-              )}
+            <button type="submit" disabled={loading || success}
+              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm">
+              {success ? (<><CheckCircle className="w-4 h-4" /> Salvo!</>)
+                : loading ? (<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />)
+                : 'Salvar Alterações'}
             </button>
           </div>
         </form>

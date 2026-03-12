@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category, PAYMENT_METHODS, getPersonColor, Person } from '@/lib/supabase'
+import { supabase, Transaction, Category, PaymentMethodDB, getPersonColor, Person } from '@/lib/supabase'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 import StatCard from '@/components/StatCard'
 import TransactionTable from '@/components/TransactionTable'
@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [people, setPeople] = useState<Person[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
   const [loading, setLoading] = useState(true)
 
   const todayMonth = (() => {
@@ -29,14 +30,16 @@ export default function Dashboard() {
 
   async function loadData() {
     setLoading(true)
-    const [{ data: cats }, { data: txns }, { data: ppl }] = await Promise.all([
+    const [{ data: cats }, { data: txns }, { data: ppl }, { data: pms }] = await Promise.all([
       supabase.from('categories').select('*').order('name'),
       supabase.from('transactions').select('*, category:categories(*)').order('date', { ascending: false }),
       supabase.from('people').select('*').order('name'),
+      supabase.from('payment_methods').select('*').order('name'),
     ])
     setCategories(cats || [])
     setTransactions(txns || [])
     setPeople(ppl || [])
+    setPaymentMethods(pms || [])
     setLoading(false)
   }
 
@@ -79,9 +82,17 @@ export default function Dashboard() {
     color: getPersonColor(name),
   })).filter(d => d.value > 0).sort((a, b) => b.value - a.value)
 
-  const paymentData = PAYMENT_METHODS.map(pm => ({
+  const pmSource = paymentMethods.length > 0
+    ? paymentMethods.map(pm => ({ key: pm.name, label: pm.name, icon: pm.icon, color: pm.color }))
+    : [
+        { key: 'credito', label: 'Crédito', icon: '💳', color: '#e8d5f5' },
+        { key: 'pix_debito', label: 'Pix/Débito', icon: '⚡', color: '#b2f0e8' },
+        { key: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#c8f5c8' },
+      ]
+
+  const paymentData = pmSource.map(pm => ({
     name: `${pm.icon} ${pm.label}`,
-    value: filtered.filter(t => t.payment_method === pm.value).reduce((a, t) => a + t.amount, 0),
+    value: filtered.filter(t => t.payment_method === pm.key).reduce((a, t) => a + t.amount, 0),
     color: pm.color,
     icon: pm.icon,
   })).filter(d => d.value > 0)
@@ -309,7 +320,7 @@ export default function Dashboard() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        <TransactionTable transactions={recent} />
+        <TransactionTable transactions={recent} paymentMethods={paymentMethods} />
       </div>
     </div>
   )

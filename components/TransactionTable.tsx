@@ -1,6 +1,6 @@
 'use client'
 
-import { Transaction, getPersonColor } from '@/lib/supabase'
+import { Transaction, getPersonColor, PaymentMethodDB } from '@/lib/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import PaymentBadge from '@/components/PaymentBadge'
 import { Trash2, Pencil } from 'lucide-react'
@@ -10,9 +10,10 @@ interface Props {
   transactions: Transaction[]
   onDelete?: (id: string) => void
   showEditLink?: boolean
+  paymentMethods?: PaymentMethodDB[]
 }
 
-export default function TransactionTable({ transactions, onDelete, showEditLink = false }: Props) {
+export default function TransactionTable({ transactions, onDelete, showEditLink = false, paymentMethods }: Props) {
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
@@ -54,7 +55,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                       {t.category.icon} {t.category.name}
                     </span>
                   )}
-                  <PaymentBadge method={t.payment_method} />
+                  <PaymentBadge method={t.payment_method} methods={paymentMethods} />
                   {t.person && (
                     <span
                       className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700"
@@ -78,7 +79,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                 )}
               </td>
               <td className="hidden sm:table-cell py-3.5 px-3 md:px-4">
-                <PaymentBadge method={t.payment_method} />
+                <PaymentBadge method={t.payment_method} methods={paymentMethods} />
               </td>
               <td className="hidden lg:table-cell py-3.5 px-3 md:px-4">
                 {t.person ? (

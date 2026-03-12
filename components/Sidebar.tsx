@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users } from 'lucide-react'
+import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -10,8 +10,9 @@ const links = [
   { href: '/lancamentos', label: 'Lançamentos', icon: List },
   { href: '/lancamentos/novo', label: 'Novo Gasto', icon: PlusCircle },
   { href: '/categorias', label: 'Categorias', icon: Tag },
-  { href: '/relatorios', label: 'Relatórios', icon: BarChart2 },
+  { href: '/formas-pagamento', label: 'Pagamentos', icon: CreditCard },
   { href: '/pessoas', label: 'Pessoas', icon: Users },
+  { href: '/relatorios', label: 'Relatórios', icon: BarChart2 },
 ]
 
 interface SidebarProps {

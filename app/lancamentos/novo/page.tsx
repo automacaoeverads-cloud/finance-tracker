@@ -4,13 +4,14 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase, Category, PAYMENT_METHODS, Person } from '@/lib/supabase'
+import { supabase, Category, PaymentMethodDB, Person } from '@/lib/supabase'
 import { CheckCircle, PlusCircle } from 'lucide-react'
 
 export default function NovoLancamento() {
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [people, setPeople] = useState<Person[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({
@@ -26,9 +27,11 @@ export default function NovoLancamento() {
     Promise.all([
       supabase.from('categories').select('*').order('name'),
       supabase.from('people').select('*').order('name'),
-    ]).then(([{ data: cats }, { data: ppl }]) => {
+      supabase.from('payment_methods').select('*').order('name'),
+    ]).then(([{ data: cats }, { data: ppl }, { data: pms }]) => {
       setCategories(cats || [])
       setPeople(ppl || [])
+      setPaymentMethods(pms || [])
     })
   }, [])
 
@@ -80,41 +83,20 @@ export default function NovoLancamento() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className={labelClass}>Descrição *</label>
-            <input
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Ex: Almoço no restaurante"
-              className={inputClass}
-              required
-            />
+            <input name="description" value={form.description} onChange={handleChange}
+              placeholder="Ex: Almoço no restaurante" className={inputClass} required />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Valor (R$) *</label>
-              <input
-                name="amount"
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={form.amount}
-                onChange={handleChange}
-                placeholder="0,00"
-                className={inputClass}
-                required
-              />
+              <input name="amount" type="number" step="0.01" min="0.01" value={form.amount}
+                onChange={handleChange} placeholder="0,00" className={inputClass} required />
             </div>
             <div>
               <label className={labelClass}>Data *</label>
-              <input
-                name="date"
-                type="date"
-                value={form.date}
-                onChange={handleChange}
-                className={inputClass}
-                required
-              />
+              <input name="date" type="date" value={form.date} onChange={handleChange}
+                className={inputClass} required />
             </div>
           </div>
 
@@ -123,18 +105,21 @@ export default function NovoLancamento() {
               <label className={labelClass}>Categoria</label>
               <select name="category_id" value={form.category_id} onChange={handleChange} className={inputClass}>
                 <option value="">Sem categoria</option>
-                {categories.map(c => (
-                  <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-                ))}
+                {categories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
               </select>
             </div>
             <div>
               <label className={labelClass}>Pagamento</label>
               <select name="payment_method" value={form.payment_method} onChange={handleChange} className={inputClass}>
                 <option value="">Não informado</option>
-                {PAYMENT_METHODS.map(pm => (
-                  <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
-                ))}
+                {paymentMethods.length > 0
+                  ? paymentMethods.map(pm => <option key={pm.id} value={pm.name}>{pm.icon} {pm.name}</option>)
+                  : <>
+                      <option value="Crédito">💳 Crédito</option>
+                      <option value="Pix / Débito">⚡ Pix / Débito</option>
+                      <option value="Dinheiro">💵 Dinheiro</option>
+                    </>
+                }
               </select>
             </div>
           </div>
@@ -143,32 +128,20 @@ export default function NovoLancamento() {
             <label className={labelClass}>Quem gastou</label>
             <select name="person" value={form.person} onChange={handleChange} className={inputClass}>
               <option value="">Não informado</option>
-              {people.map(p => (
-                <option key={p.id} value={p.name}>{p.name}</option>
-              ))}
+              {people.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
             </select>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => router.push('/lancamentos')}
-              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
-            >
+            <button type="button" onClick={() => router.push('/lancamentos')}
+              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors">
               Cancelar
             </button>
-            <button
-              type="submit"
-              disabled={loading || success}
-              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm"
-            >
-              {success ? (
-                <><CheckCircle className="w-4 h-4" /> Salvo!</>
-              ) : loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                'Salvar Gasto'
-              )}
+            <button type="submit" disabled={loading || success}
+              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm">
+              {success ? (<><CheckCircle className="w-4 h-4" /> Salvo!</>)
+                : loading ? (<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />)
+                : 'Salvar Gasto'}
             </button>
           </div>
         </form>

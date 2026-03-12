@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category, PAYMENT_METHODS, Person } from '@/lib/supabase'
+import { supabase, Transaction, Category, PaymentMethodDB, Person } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/utils'
 import TransactionTable from '@/components/TransactionTable'
 import { Search, SlidersHorizontal, Plus } from 'lucide-react'
@@ -13,6 +13,7 @@ export default function Lancamentos() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [people, setPeople] = useState<Person[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
@@ -26,14 +27,16 @@ export default function Lancamentos() {
 
   async function loadData() {
     setLoading(true)
-    const [{ data: cats }, { data: txns }, { data: ppl }] = await Promise.all([
+    const [{ data: cats }, { data: txns }, { data: ppl }, { data: pms }] = await Promise.all([
       supabase.from('categories').select('*').order('name'),
       supabase.from('transactions').select('*, category:categories(*)').order('date', { ascending: false }),
       supabase.from('people').select('*').order('name'),
+      supabase.from('payment_methods').select('*').order('name'),
     ])
     setCategories(cats || [])
     setTransactions(txns || [])
     setPeople(ppl || [])
+    setPaymentMethods(pms || [])
     setLoading(false)
   }
 
@@ -112,9 +115,10 @@ export default function Lancamentos() {
             className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-600"
           >
             <option value="">Todos pagamentos</option>
-            {PAYMENT_METHODS.map(pm => (
-              <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
-            ))}
+            {paymentMethods.length > 0
+              ? paymentMethods.map(pm => <option key={pm.id} value={pm.name}>{pm.icon} {pm.name}</option>)
+              : <><option value="Crédito">💳 Crédito</option><option value="Pix / Débito">⚡ Pix/Débito</option><option value="Dinheiro">💵 Dinheiro</option></>
+            }
           </select>
           <select
             value={filterPerson}
@@ -159,7 +163,7 @@ export default function Lancamentos() {
             <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
           </div>
         ) : (
-          <TransactionTable transactions={filtered} onDelete={handleDelete} showEditLink />
+          <TransactionTable transactions={filtered} onDelete={handleDelete} showEditLink paymentMethods={paymentMethods} />
         )}
       </div>
     </div>

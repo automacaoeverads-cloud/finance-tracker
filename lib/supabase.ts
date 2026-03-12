@@ -13,13 +13,23 @@ export type Category = {
   created_at: string
 }
 
-export type PaymentMethod = 'credito' | 'pix_debito' | 'dinheiro' | null
+export type PaymentMethodDB = {
+  id: string
+  name: string
+  icon: string
+  color: string
+  created_at: string
+}
 
-export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string }[] = [
+// Fallback hardcoded (para compatibilidade com dados antigos)
+export const PAYMENT_METHODS_FALLBACK: { value: string; label: string; icon: string; color: string }[] = [
   { value: 'credito', label: 'Crédito', icon: '💳', color: '#e8d5f5' },
   { value: 'pix_debito', label: 'Pix / Débito', icon: '⚡', color: '#b2f0e8' },
   { value: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#c8f5c8' },
 ]
+
+// Compat alias
+export const PAYMENT_METHODS = PAYMENT_METHODS_FALLBACK
 
 export type Person = {
   id: string
@@ -44,7 +54,7 @@ export type Transaction = {
   description: string
   category_id: string
   category?: Category
-  payment_method: PaymentMethod
+  payment_method: string | null
   date: string
   created_at: string
   person?: string | null
