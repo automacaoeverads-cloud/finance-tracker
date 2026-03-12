@@ -16,9 +16,9 @@ export type Category = {
 export type PaymentMethod = 'credito' | 'pix' | 'dinheiro' | null
 
 export const PAYMENT_METHODS: { value: string; label: string; icon: string; color: string; bg: string; text: string }[] = [
-  { value: 'pix', label: 'PIX', icon: '\u26a1', color: '#bbf7d0', bg: 'bg-green-100', text: 'text-green-700' },
-  { value: 'credito', label: 'Cr\u00e9dito', icon: '\U0001f4b3', color: '#bfdbfe', bg: 'bg-blue-100', text: 'text-blue-700' },
-  { value: 'dinheiro', label: 'Dinheiro', icon: '\U0001f4b5', color: '#fef08a', bg: 'bg-yellow-100', text: 'text-yellow-700' },
+  { value: 'pix', label: 'PIX', icon: '⚡', color: '#bbf7d0', bg: 'bg-green-100', text: 'text-green-700' },
+  { value: 'credito', label: 'Crédito', icon: '💳', color: '#bfdbfe', bg: 'bg-blue-100', text: 'text-blue-700' },
+  { value: 'dinheiro', label: 'Dinheiro', icon: '💵', color: '#fef08a', bg: 'bg-yellow-100', text: 'text-yellow-700' },
 ]
 
 export type Transaction = {
