@@ -85,6 +85,38 @@ export function MonthlyAreaChart({ data }: { data: LineData[] }) {
   )
 }
 
+interface PaidData {
+  name: string
+  value: number
+  amount: number
+  color: string
+}
+
+export function PaidStatusChart({ data }: { data: PaidData[] }) {
+  if (data.every(d => d.value === 0)) return (
+    <div className="flex items-center justify-center h-[260px] text-slate-400 text-sm">Nenhum dado disponível</div>
+  )
+  return (
+    <ResponsiveContainer width="100%" height={260}>
+      <PieChart>
+        <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value">
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(value: number, name: string, props: any) => [
+            `${value} lançamento${value !== 1 ? 's' : ''} · ${formatCurrency(props.payload.amount)}`,
+            name
+          ]}
+          contentStyle={{ backgroundColor: 'white', border: '1px solid #ccfbf1', borderRadius: '12px', fontSize: '12px' }}
+        />
+        <Legend iconType="circle" iconSize={8} formatter={(value) => <span style={{ fontSize: '12px', color: '#6b7280' }}>{value}</span>} />
+      </PieChart>
+    </ResponsiveContainer>
+  )
+}
+
 export function PaymentBarChart({ data }: { data: BarData[] }) {
   return (
     <ResponsiveContainer width="100%" height={160}>
