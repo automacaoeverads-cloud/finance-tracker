@@ -84,9 +84,9 @@ export default function EditarLancamento() {
   if (notFound) {
     return (
       <div className="max-w-xl mx-auto text-center py-16">
-        <p className="text-gray-400 text-lg">Lan\u00e7amento n\u00e3o encontrado.</p>
+        <p className="text-gray-400 text-lg">Lançamento não encontrado.</p>
         <Link href="/lancamentos" className="mt-4 inline-flex items-center gap-2 text-teal-500 hover:text-teal-700 text-sm font-medium">
-          <ArrowLeft className="w-4 h-4" /> Voltar para lan\u00e7amentos
+          <ArrowLeft className="w-4 h-4" /> Voltar para lançamentos
         </Link>
       </div>
     )
@@ -100,25 +100,25 @@ export default function EditarLancamento() {
         </Link>
         <div>
           <h2 className="text-2xl font-bold text-teal-900">Editar Gasto</h2>
-          <p className="text-sm text-gray-400 mt-1">Atualize as informa\u00e7\u00f5es do lan\u00e7amento</p>
+          <p className="text-sm text-gray-400 mt-1">Atualize as informações do lançamento</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-teal-50">
+      <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-teal-50">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-teal-800 mb-2">Descri\u00e7\u00e3o *</label>
+            <label className="block text-sm font-medium text-teal-800 mb-2">Descrição *</label>
             <input
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Ex: Almo\u00e7o no restaurante"
+              placeholder="Ex: Almoço no restaurante"
               className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30"
               required
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-teal-800 mb-2">Valor (R$) *</label>
               <input
@@ -146,7 +146,7 @@ export default function EditarLancamento() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-teal-800 mb-2">Categoria</label>
               <select
@@ -169,7 +169,7 @@ export default function EditarLancamento() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-teal-50/30 text-gray-600"
               >
-                <option value="">N\u00e3o informado</option>
+                <option value="">Não informado</option>
                 {PAYMENT_METHODS.map(pm => (
                   <option key={pm.value} value={pm.value}>{pm.icon} {pm.label}</option>
                 ))}
@@ -177,7 +177,7 @@ export default function EditarLancamento() {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               type="button"
               onClick={() => router.push('/lancamentos')}
@@ -195,7 +195,7 @@ export default function EditarLancamento() {
               ) : loading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                'Salvar Altera\u00e7\u00f5es'
+                'Salvar Alterações'
               )}
             </button>
           </div>
