@@ -8,7 +8,7 @@ import { formatCurrency, formatMonth } from '@/lib/utils'
 import StatCard from '@/components/StatCard'
 import TransactionTable from '@/components/TransactionTable'
 import { CategoryPieChart, MonthlyAreaChart, PaymentBarChart, PaidStatusChart } from '@/components/Charts'
-import { TrendingDown, Wallet, Tag, Calendar, ArrowRight, SlidersHorizontal, X } from 'lucide-react'
+import { TrendingDown, Wallet, Clock, Calendar, ArrowRight, SlidersHorizontal, X } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Dashboard() {
@@ -201,11 +201,11 @@ export default function Dashboard() {
           iconBg="bg-pink-100"
         />
         <StatCard
-          title="Categorias"
-          value={String(categories.length)}
-          subtitle="ativas"
-          icon={<Tag className="w-5 h-5 text-emerald-600" />}
-          iconBg="bg-emerald-100"
+          title="Valor Pendente"
+          value={formatCurrency(filtered.filter(t => !t.paid).reduce((a, t) => a + t.amount, 0))}
+          subtitle={`${filtered.filter(t => !t.paid).length} lançamento${filtered.filter(t => !t.paid).length !== 1 ? 's' : ''} a pagar`}
+          icon={<Clock className="w-5 h-5 text-amber-500" />}
+          iconBg="bg-amber-100"
         />
       </div>
 
