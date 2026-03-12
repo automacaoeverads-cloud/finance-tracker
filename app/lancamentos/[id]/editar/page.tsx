@@ -17,7 +17,7 @@ export default function EditarLancamento() {
   const [fetching, setFetching] = useState(true)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({
-    description: '', amount: '', category_id: '', payment_method: '', date: '', person: '',
+    description: '', amount: '', category_id: '', payment_method: '', date: '', person: '', paid: false,
   })
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function EditarLancamento() {
         setForm({
           description: txn.description, amount: String(txn.amount),
           category_id: txn.category_id || '', payment_method: txn.payment_method || '',
-          date: txn.date, person: txn.person || '',
+          date: txn.date, person: txn.person || '', paid: txn.paid ?? false,
         })
       }
       setFetching(false)
@@ -54,7 +54,7 @@ export default function EditarLancamento() {
     const { error } = await supabase.from('transactions').update({
       description: form.description, amount: parseFloat(form.amount),
       category_id: form.category_id || null, payment_method: form.payment_method || null,
-      date: form.date, person: form.person || null,
+      date: form.date, person: form.person || null, paid: form.paid,
     }).eq('id', id)
     setLoading(false)
     if (!error) { setSuccess(true); setTimeout(() => router.push('/lancamentos'), 1200) }
@@ -135,6 +135,19 @@ export default function EditarLancamento() {
               <option value="">Não informado</option>
               {people.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
             </select>
+          </div>
+
+          <div>
+            <label className={labelClass}>Status</label>
+            <button
+              type="button"
+              onClick={() => setForm(prev => ({ ...prev, paid: !prev.paid }))}
+              className={`w-full py-3 rounded-xl text-sm font-semibold border-2 transition-colors ${
+                form.paid ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-amber-50 text-amber-700 border-amber-200'
+              }`}
+            >
+              {form.paid ? '✓ Pago' : '⏳ Pendente — clique para marcar como pago'}
+            </button>
           </div>
 
           <div className="flex gap-3 pt-2">
