@@ -43,8 +43,18 @@ export default function EditarLancamento() {
     loadData()
   }, [id])
 
+  function isAutoPaid(paymentMethod: string) {
+    const lower = paymentMethod.toLowerCase()
+    return lower.includes('pix') || lower.includes('dinheiro')
+  }
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+    setForm(prev => ({
+      ...prev,
+      [name]: value,
+      ...(name === 'payment_method' && isAutoPaid(value) ? { paid: true } : {}),
+    }))
   }
 
   async function handleSubmit(e: React.FormEvent) {
