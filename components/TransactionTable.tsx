@@ -18,7 +18,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
           <span className="text-2xl">📭</span>
         </div>
         <p className="text-slate-500 dark:text-slate-400 font-semibold">Nenhum lançamento encontrado</p>
@@ -44,7 +44,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
         </thead>
         <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
           {transactions.map((t) => (
-            <tr key={t.id} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors group">
+            <tr key={t.id} className="hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10 transition-colors group">
               <td className="py-3.5 px-3 md:px-4 text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">{formatDate(t.date)}</td>
               <td className="py-3.5 px-3 md:px-4">
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t.description}</p>
@@ -112,14 +112,14 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                   </span>
                 )}
               </td>
-              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{formatCurrency(t.amount)}</td>
+              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {(onDelete || showEditLink) && (
                 <td className="py-3.5 px-3 md:px-4">
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     {showEditLink && (
                       <Link
                         href={`/lancamentos/${t.id}/editar`}
-                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </Link>
