@@ -86,7 +86,7 @@ export default function NovoLancamento() {
         <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Registre um novo lançamento</p>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800"
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-8 border border-slate-100 dark:border-slate-800"
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         <div className="flex items-center gap-2.5 mb-6">
           <span className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -115,7 +115,7 @@ export default function NovoLancamento() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Categoria</label>
               <select name="category_id" value={form.category_id} onChange={handleChange} className={inputClass}>
