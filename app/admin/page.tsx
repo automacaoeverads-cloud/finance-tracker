@@ -66,22 +66,22 @@ export default function AdminPage() {
   return (
     <div className="space-y-6 max-w-5xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center flex-shrink-0">
             <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Admin</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Admin</h1>
             <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Gerenciamento de usuários</p>
           </div>
         </div>
         <button
           onClick={loadUsers}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          className="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex-shrink-0"
         >
           <RefreshCw className="w-4 h-4" />
-          Atualizar
+          <span className="hidden sm:inline">Atualizar</span>
         </button>
       </div>
 
@@ -90,17 +90,17 @@ export default function AdminPage() {
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800"
           style={{ borderLeft: '4px solid #8b5cf6' }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-1">Total de usuários</p>
-          <p className="text-3xl font-bold text-slate-800 dark:text-white">{users.length}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">{users.length}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800"
           style={{ borderLeft: '4px solid #10b981' }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-1">Confirmados</p>
-          <p className="text-3xl font-bold text-slate-800 dark:text-white">{users.filter(u => u.confirmed_at).length}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">{users.filter(u => u.confirmed_at).length}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800"
           style={{ borderLeft: '4px solid #10b981' }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-1">Ativos hoje</p>
-          <p className="text-3xl font-bold text-slate-800 dark:text-white">
+          <p className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
             {users.filter(u => {
               if (!u.last_sign_in_at) return false
               const today = new Date().toDateString()
