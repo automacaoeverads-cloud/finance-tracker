@@ -25,7 +25,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { theme, toggle } = useTheme()
-  const { signOut } = useAuth()
+  const { user, signOut } = useAuth()
 
   const content = (
     <aside className="h-full w-[260px] bg-slate-900 flex flex-col">
@@ -91,12 +91,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Footer */}
       <div className="px-5 py-4 border-t border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-indigo-400">FT</span>
+          <div className="w-8 h-8 rounded-full bg-indigo-600/30 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold text-indigo-400">
+              {user?.email?.charAt(0).toUpperCase() ?? 'U'}
+            </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-slate-300">Finance Tracker</p>
-            <p className="text-[10px] text-slate-500">v1.0</p>
+            <p className="text-xs font-semibold text-slate-300 truncate">{user?.email ?? 'Usuário'}</p>
+            <p className="text-[10px] text-slate-500">Conta ativa</p>
           </div>
           {/* Dark mode toggle */}
           <button
