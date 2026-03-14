@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase, PaymentMethodDB } from '@/lib/supabase'
+import { useAuth } from '@/lib/auth'
 import { Trash2, Plus, Pencil, CreditCard, X, Check } from 'lucide-react'
 
 const ICONS = ['💳', '⚡', '💵', '🏦', '🏧', '📱', '💰', '🪙', '🏪', '💎', '🎯', '🔑']
@@ -13,6 +14,7 @@ const COLORS = [
 ]
 
 export default function FormasPagamento() {
+  const { user } = useAuth()
   const [methods, setMethods] = useState<PaymentMethodDB[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -32,7 +34,7 @@ export default function FormasPagamento() {
     if (editingId) {
       await supabase.from('payment_methods').update({ name: form.name, icon: form.icon, color: form.color }).eq('id', editingId)
     } else {
-      await supabase.from('payment_methods').insert({ name: form.name, icon: form.icon, color: form.color })
+      await supabase.from('payment_methods').insert({ name: form.name, icon: form.icon, color: form.color, user_id: user?.id })
     }
     cancelForm()
     loadMethods()
