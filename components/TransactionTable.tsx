@@ -28,117 +28,148 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
   }
 
   return (
-    <div className="overflow-x-auto -mx-2 md:mx-0">
-      <table className="w-full min-w-[400px]">
-        <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800">
-            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Data</th>
-            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Descrição</th>
-            <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Categoria</th>
-            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pagamento</th>
-            <th className="hidden lg:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pessoa</th>
-            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pago</th>
-            <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Valor</th>
-            {(onDelete || showEditLink) && <th className="py-3 px-3 md:px-4"></th>}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-          {transactions.map((t) => (
-            <tr key={t.id} className="hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10 transition-colors group">
-              <td className="py-3.5 px-3 md:px-4 text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">{formatDate(t.date)}</td>
-              <td className="py-3.5 px-3 md:px-4">
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t.description}</p>
-                <div className="flex flex-wrap gap-1 mt-1 sm:hidden">
-                  {t.category && (
-                    <span
-                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700"
-                      style={{ backgroundColor: t.category.color + '80' }}
-                    >
-                      {t.category.icon} {t.category.name}
-                    </span>
-                  )}
-                  <PaymentBadge method={t.payment_method} methods={paymentMethods} />
-                  {t.person && (
-                    <span
-                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700"
-                      style={{ backgroundColor: getPersonColor(t.person) }}
-                    >
-                      👤 {t.person}
-                    </span>
-                  )}
-                </div>
-              </td>
-              <td className="hidden md:table-cell py-3.5 px-4">
-                {t.category ? (
-                  <span
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-slate-700"
-                    style={{ backgroundColor: t.category.color + '80' }}
-                  >
+    <div className="w-full overflow-x-hidden">
+      {/* ── Mobile layout: card por linha ── */}
+      <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
+        {transactions.map((t) => (
+          <div key={t.id} className="py-3 flex items-start gap-3">
+            {/* Conteúdo principal */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate leading-snug">{t.description}</p>
+                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0 ml-1">{formatCurrency(t.amount)}</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <span className="text-xs text-slate-400 dark:text-slate-500">{formatDate(t.date)}</span>
+                {t.category && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700 dark:text-slate-800"
+                    style={{ backgroundColor: t.category.color + '80' }}>
                     {t.category.icon} {t.category.name}
                   </span>
-                ) : (
-                  <span className="text-sm text-slate-300 dark:text-slate-600">—</span>
                 )}
-              </td>
-              <td className="hidden sm:table-cell py-3.5 px-3 md:px-4">
                 <PaymentBadge method={t.payment_method} methods={paymentMethods} />
-              </td>
-              <td className="hidden lg:table-cell py-3.5 px-3 md:px-4">
-                {t.person ? (
-                  <span
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-slate-700"
-                    style={{ backgroundColor: getPersonColor(t.person) }}
-                  >
-                    {t.person}
-                  </span>
-                ) : (
-                  <span className="text-sm text-slate-300 dark:text-slate-600">—</span>
-                )}
-              </td>
-              <td className="hidden sm:table-cell py-3.5 px-3 md:px-4">
-                {t.paid ? (
-                  <span
-                    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 cursor-pointer hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-colors select-none"
-                    onClick={() => onTogglePaid?.(t.id, false)}
-                  >
-                    ✓ Pago
-                  </span>
-                ) : (
-                  <span
-                    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-900/60 transition-colors select-none"
-                    onClick={() => onTogglePaid?.(t.id, true)}
-                  >
-                    ⏳ Pendente
+              </div>
+              <div className="flex items-center gap-2 mt-1.5">
+                {t.person && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700"
+                    style={{ backgroundColor: getPersonColor(t.person) }}>
+                    👤 {t.person}
                   </span>
                 )}
-              </td>
-              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(t.amount)}</td>
-              {(onDelete || showEditLink) && (
-                <td className="py-3.5 px-3 md:px-4">
-                  <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                    {showEditLink && (
-                      <Link
-                        href={`/lancamentos/${t.id}/editar`}
-                        className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors"
-                      >
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Link>
-                    )}
-                    {onDelete && (
-                      <button
-                        onClick={() => onDelete(t.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                </td>
-              )}
+                {onTogglePaid && (
+                  t.paid ? (
+                    <button onClick={() => onTogglePaid(t.id, false)}
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
+                      ✓ Pago
+                    </button>
+                  ) : (
+                    <button onClick={() => onTogglePaid(t.id, true)}
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400">
+                      ⏳ Pendente
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+            {/* Ações */}
+            {(onDelete || showEditLink) && (
+              <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+                {showEditLink && (
+                  <Link href={`/lancamentos/${t.id}/editar`}
+                    className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl transition-colors">
+                    <Pencil className="w-4 h-4" />
+                  </Link>
+                )}
+                {onDelete && (
+                  <button onClick={() => onDelete(t.id)}
+                    className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* ── Desktop layout: tabela ── */}
+      <div className="hidden sm:block overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-slate-100 dark:border-slate-800">
+              <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Data</th>
+              <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Descrição</th>
+              <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Categoria</th>
+              <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pagamento</th>
+              <th className="hidden lg:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pessoa</th>
+              <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pago</th>
+              <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Valor</th>
+              {(onDelete || showEditLink) && <th className="py-3 px-3 md:px-4"></th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+            {transactions.map((t) => (
+              <tr key={t.id} className="hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10 transition-colors group">
+                <td className="py-3.5 px-3 md:px-4 text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">{formatDate(t.date)}</td>
+                <td className="py-3.5 px-3 md:px-4">
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t.description}</p>
+                </td>
+                <td className="hidden md:table-cell py-3.5 px-4">
+                  {t.category ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-slate-700"
+                      style={{ backgroundColor: t.category.color + '80' }}>
+                      {t.category.icon} {t.category.name}
+                    </span>
+                  ) : <span className="text-sm text-slate-300 dark:text-slate-600">—</span>}
+                </td>
+                <td className="py-3.5 px-3 md:px-4">
+                  <PaymentBadge method={t.payment_method} methods={paymentMethods} />
+                </td>
+                <td className="hidden lg:table-cell py-3.5 px-3 md:px-4">
+                  {t.person ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-slate-700"
+                      style={{ backgroundColor: getPersonColor(t.person) }}>
+                      {t.person}
+                    </span>
+                  ) : <span className="text-sm text-slate-300 dark:text-slate-600">—</span>}
+                </td>
+                <td className="py-3.5 px-3 md:px-4">
+                  {t.paid ? (
+                    <span onClick={() => onTogglePaid?.(t.id, false)}
+                      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 cursor-pointer hover:bg-emerald-200 transition-colors select-none">
+                      ✓ Pago
+                    </span>
+                  ) : (
+                    <span onClick={() => onTogglePaid?.(t.id, true)}
+                      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 cursor-pointer hover:bg-amber-200 transition-colors select-none">
+                      ⏳ Pendente
+                    </span>
+                  )}
+                </td>
+                <td className="py-3.5 px-3 md:px-4 text-right font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(t.amount)}</td>
+                {(onDelete || showEditLink) && (
+                  <td className="py-3.5 px-3 md:px-4">
+                    <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                      {showEditLink && (
+                        <Link href={`/lancamentos/${t.id}/editar`}
+                          className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors">
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Link>
+                      )}
+                      {onDelete && (
+                        <button onClick={() => onDelete(t.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
