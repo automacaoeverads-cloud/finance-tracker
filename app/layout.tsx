@@ -334,7 +334,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
             <span className="font-bold text-white text-base">Finance Tracker</span>
           </div>
         </header>
-        <main className="flex-1 p-5 md:p-8">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 md:p-8 w-full overflow-x-hidden">{children}</main>
       </div>
     </div>
   )
