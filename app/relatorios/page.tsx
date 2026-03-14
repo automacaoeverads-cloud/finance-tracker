@@ -73,13 +73,13 @@ export default function Relatorios() {
           type="month"
           value={selectedMonth}
           onChange={e => setSelectedMonth(e.target.value)}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200"
         />
       </div>
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 text-center" style={{ borderLeft: '4px solid #6366f1', ...cardStyle }}>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 text-center" style={{ borderLeft: '4px solid #10b981', ...cardStyle }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Total do mês</p>
           <p className="text-3xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalMonth)}</p>
         </div>
@@ -122,7 +122,7 @@ export default function Relatorios() {
                 <div key={item.name} className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                   <span className="text-sm text-slate-600 dark:text-slate-300 flex-1">{item.name}</span>
-                  <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(item.value)}</span>
+                  <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(item.value)}</span>
                   <span className="text-xs text-slate-400 dark:text-slate-500 w-9 text-right font-semibold">
                     {totalMonth > 0 ? ((item.value / totalMonth) * 100).toFixed(0) : 0}%
                   </span>
@@ -144,7 +144,7 @@ export default function Relatorios() {
             <div className="space-y-3">
               {top5.map((t, i) => (
                 <div key={t.id} className="flex items-center gap-3">
-                  <span className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  <span className="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -158,7 +158,7 @@ export default function Relatorios() {
                       <PaymentBadge method={t.payment_method} methods={paymentMethods} />
                     </div>
                   </div>
-                  <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex-shrink-0">{formatCurrency(t.amount)}</span>
+                  <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0">{formatCurrency(t.amount)}</span>
                 </div>
               ))}
             </div>
@@ -182,7 +182,7 @@ export default function Relatorios() {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between text-sm mb-1.5">
                     <span className="text-slate-600 dark:text-slate-300 font-medium">{pm.name}</span>
-                    <span className="text-indigo-600 dark:text-indigo-400 font-bold ml-2">{formatCurrency(pm.value)}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold ml-2">{formatCurrency(pm.value)}</span>
                   </div>
                   <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className="h-full rounded-full transition-all duration-500" style={{ width: `${totalMonth > 0 ? (pm.value / totalMonth) * 100 : 0}%`, backgroundColor: pm.color, filter: 'brightness(0.85)' }} />
