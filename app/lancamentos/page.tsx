@@ -161,8 +161,8 @@ export default function Lancamentos() {
               </select>
               <input type="month" value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className={inputClass} />
               <div className="flex gap-2">
-                <input type="number" placeholder="R$ mín" value={filterMinValue} onChange={e => setFilterMinValue(e.target.value)} className={inputClass} />
-                <input type="number" placeholder="R$ máx" value={filterMaxValue} onChange={e => setFilterMaxValue(e.target.value)} className={inputClass} />
+                <input type="number" placeholder="mín" value={filterMinValue} onChange={e => setFilterMinValue(e.target.value)} className={inputClass} />
+                <input type="number" placeholder="máx" value={filterMaxValue} onChange={e => setFilterMaxValue(e.target.value)} className={inputClass} />
               </div>
             </div>
           </div>
