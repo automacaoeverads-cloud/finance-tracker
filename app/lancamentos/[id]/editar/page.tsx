@@ -70,12 +70,12 @@ export default function EditarLancamento() {
     if (!error) { setSuccess(true); setTimeout(() => router.push('/lancamentos'), 1200) }
   }
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
   const labelClass = "block text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2"
 
   if (fetching) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
     </div>
   )
 
@@ -166,7 +166,7 @@ export default function EditarLancamento() {
               Cancelar
             </button>
             <button type="submit" disabled={loading || success}
-              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm">
+              className="flex-1 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm">
               {success ? (<><CheckCircle className="w-4 h-4" /> Salvo!</>)
                 : loading ? (<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />)
                 : 'Salvar Alterações'}
