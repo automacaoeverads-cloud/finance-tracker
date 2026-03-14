@@ -89,7 +89,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
       </div>
     )
   }
@@ -107,7 +107,7 @@ export default function Dashboard() {
         </div>
         <Link
           href="/lancamentos/novo"
-          className="hidden sm:flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200"
+          className="hidden sm:flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-200"
         >
           <Plus className="w-4 h-4" />
           Novo Gasto
@@ -118,21 +118,21 @@ export default function Dashboard() {
       <div className="bg-white dark:bg-slate-900 rounded-2xl px-4 py-3 flex flex-wrap items-center gap-2.5 border border-slate-100 dark:border-slate-800"
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
       >
-        <span className="w-7 h-7 bg-indigo-50 dark:bg-indigo-900/40 rounded-lg flex items-center justify-center flex-shrink-0">
-          <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-500" />
+        <span className="w-7 h-7 bg-emerald-50 dark:bg-emerald-900/40 rounded-lg flex items-center justify-center flex-shrink-0">
+          <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-500" />
         </span>
 
         <input
           type="month"
           value={filterMonth}
           onChange={e => setFilterMonth(e.target.value)}
-          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
         />
 
         <select
           value={filterPerson}
           onChange={e => setFilterPerson(e.target.value)}
-          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
         >
           <option value="">Todas as pessoas</option>
           {people.map(p => (
@@ -161,9 +161,9 @@ export default function Dashboard() {
           title={filterPerson ? `Total — ${filterPerson}` : 'Total no período'}
           value={formatCurrency(totalFiltered)}
           subtitle={`${filtered.length} lançamentos`}
-          icon={<TrendingDown className="w-5 h-5 text-indigo-600" />}
-          iconBg="bg-indigo-100 dark:bg-indigo-900/40"
-          accent="#6366f1"
+          icon={<TrendingDown className="w-5 h-5 text-emerald-600" />}
+          iconBg="bg-emerald-100 dark:bg-emerald-900/40"
+          accent="#10b981"
         />
         <StatCard
           title="Pendente"
@@ -185,9 +185,9 @@ export default function Dashboard() {
           title="Média por gasto"
           value={formatCurrency(avgFiltered)}
           subtitle="no período filtrado"
-          icon={<BarChart2 className="w-5 h-5 text-violet-500" />}
-          iconBg="bg-violet-100 dark:bg-violet-900/40"
-          accent="#8b5cf6"
+          icon={<BarChart2 className="w-5 h-5 text-green-500" />}
+          iconBg="bg-green-100 dark:bg-green-900/40"
+          accent="#059669"
         />
       </div>
 
@@ -235,7 +235,7 @@ export default function Dashboard() {
           </div>
           <Link
             href="/lancamentos"
-            className="flex items-center gap-1.5 text-sm text-indigo-500 hover:text-indigo-700 font-semibold transition-colors"
+            className="flex items-center gap-1.5 text-sm text-emerald-500 hover:text-emerald-700 font-semibold transition-colors"
           >
             Ver todos
             <ArrowRight className="w-4 h-4" />
@@ -275,11 +275,11 @@ export default function Dashboard() {
                   <div className="flex justify-between text-sm mb-1.5">
                     <button
                       onClick={() => setFilterPerson(person.name)}
-                      className="text-slate-600 dark:text-slate-300 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                      className="text-slate-600 dark:text-slate-300 font-medium hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
                     >
                       {person.name}
                     </button>
-                    <span className="text-indigo-600 dark:text-indigo-400 font-bold ml-2">{formatCurrency(person.value)}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold ml-2">{formatCurrency(person.value)}</span>
                   </div>
                   <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div
