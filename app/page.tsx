@@ -95,7 +95,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-5 max-w-7xl w-full">
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
@@ -115,44 +115,41 @@ export default function Dashboard() {
       </div>
 
       {/* ── Filtros ── */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl px-4 py-3 flex flex-wrap items-center gap-2.5 border border-slate-100 dark:border-slate-800"
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-3 sm:p-4 border border-slate-100 dark:border-slate-800"
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
       >
-        <span className="w-7 h-7 bg-emerald-50 dark:bg-emerald-900/40 rounded-lg flex items-center justify-center flex-shrink-0">
-          <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-500" />
-        </span>
-
-        <input
-          type="month"
-          value={filterMonth}
-          onChange={e => setFilterMonth(e.target.value)}
-          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
-        />
-
-        <select
-          value={filterPerson}
-          onChange={e => setFilterPerson(e.target.value)}
-          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-        >
-          <option value="">Todas as pessoas</option>
-          {people.map(p => (
-            <option key={p.id} value={p.name}>{p.name}</option>
-          ))}
-        </select>
-
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            type="month"
+            value={filterMonth}
+            onChange={e => setFilterMonth(e.target.value)}
+            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+          />
+          <select
+            value={filterPerson}
+            onChange={e => setFilterPerson(e.target.value)}
+            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+          >
+            <option value="">Todas as pessoas</option>
+            {people.map(p => (
+              <option key={p.id} value={p.name}>{p.name}</option>
+            ))}
+          </select>
+        </div>
         {hasFilters && (
           <button
             onClick={() => { setFilterMonth(todayMonth); setFilterPerson('') }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 border border-slate-200 dark:border-slate-700 transition-colors"
+            className="mt-2 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 border border-slate-200 dark:border-slate-700 transition-colors"
           >
             <X className="w-3.5 h-3.5" />
-            Limpar
+            Limpar filtros · {filtered.length} lançamento{filtered.length !== 1 ? 's' : ''}
           </button>
         )}
-
-        <div className="ml-auto text-xs text-slate-400 dark:text-slate-500 font-medium">
-          {filtered.length} lançamento{filtered.length !== 1 ? 's' : ''}
-        </div>
+        {!hasFilters && (
+          <p className="text-center text-xs text-slate-400 dark:text-slate-600 mt-2 font-medium">
+            {filtered.length} lançamento{filtered.length !== 1 ? 's' : ''}
+          </p>
+        )}
       </div>
 
       {/* ── Stat cards ── */}
