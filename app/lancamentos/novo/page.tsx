@@ -73,23 +73,23 @@ export default function NovoLancamento() {
     }
   }
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
-  const labelClass = "block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2"
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
+  const labelClass = "block text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2"
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Novo Gasto</h1>
-        <p className="text-sm text-slate-400 mt-0.5">Registre um novo lançamento</p>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Novo Gasto</h1>
+        <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Registre um novo lançamento</p>
       </div>
 
-      <div className="bg-white rounded-2xl p-8 border border-slate-100"
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800"
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         <div className="flex items-center gap-2.5 mb-6">
           <span className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
             <PlusCircle className="w-4 h-4 text-blue-600" />
           </span>
-          <h2 className="font-semibold text-slate-700">Dados do Gasto</h2>
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200">Dados do Gasto</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -150,7 +150,7 @@ export default function NovoLancamento() {
               type="button"
               onClick={() => setForm(prev => ({ ...prev, paid: !prev.paid }))}
               className={`w-full py-3 rounded-xl text-sm font-semibold border-2 transition-colors ${
-                form.paid ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-amber-50 text-amber-700 border-amber-200'
+                form.paid ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
               }`}
             >
               {form.paid ? '✓ Pago' : '⏳ Pendente — clique para marcar como pago'}
@@ -159,11 +159,11 @@ export default function NovoLancamento() {
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => router.push('/lancamentos')}
-              className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors">
+              className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               Cancelar
             </button>
             <button type="submit" disabled={loading || success}
-              className="flex-1 py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm">
+              className="flex-1 py-3 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm">
               {success ? (<><CheckCircle className="w-4 h-4" /> Salvo!</>)
                 : loading ? (<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />)
                 : 'Salvar Gasto'}
