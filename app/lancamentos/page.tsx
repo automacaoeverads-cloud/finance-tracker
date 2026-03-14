@@ -6,8 +6,10 @@ import { useEffect, useState } from 'react'
 import { supabase, Transaction, Category, PaymentMethodDB, Person } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/utils'
 import TransactionTable from '@/components/TransactionTable'
-import { Search, SlidersHorizontal, Plus } from 'lucide-react'
+import { Search, SlidersHorizontal, Plus, ChevronDown, ChevronUp, X } from 'lucide-react'
 import Link from 'next/link'
+
+const inputClass = "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
 
 export default function Lancamentos() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -15,6 +17,8 @@ export default function Lancamentos() {
   const [people, setPeople] = useState<Person[]>([])
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
   const [loading, setLoading] = useState(true)
+  const [showMoreFilters, setShowMoreFilters] = useState(false)
+
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
   const [filterPayment, setFilterPayment] = useState('')
@@ -66,121 +70,116 @@ export default function Lancamentos() {
   })
 
   const total = filtered.reduce((acc, t) => acc + t.amount, 0)
+  const hasExtraFilters = filterCategory || filterPayment || filterPerson || filterPaid || filterMonth || filterMinValue || filterMaxValue
+
+  function clearAll() {
+    setSearch(''); setFilterCategory(''); setFilterPayment(''); setFilterMonth('')
+    setFilterMinValue(''); setFilterMaxValue(''); setFilterPerson(''); setFilterPaid('')
+  }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-5 max-w-7xl w-full">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Lançamentos</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">
-            <span className="text-slate-600 dark:text-slate-300 font-semibold">{filtered.length}</span> registros ·{' '}
-            <span className="text-blue-600 font-semibold">{formatCurrency(total)}</span>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Lançamentos</h1>
+          <p className="text-sm text-slate-400 mt-0.5">
+            <span className="font-semibold text-slate-600 dark:text-slate-300">{filtered.length}</span> registros ·{' '}
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(total)}</span>
           </p>
         </div>
         <Link
           href="/lancamentos/novo"
-          className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
+          className="flex items-center gap-1.5 bg-emerald-600 text-white px-3.5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm flex-shrink-0"
         >
           <Plus className="w-4 h-4" />
-          Novo Gasto
+          <span className="hidden sm:inline">Novo Gasto</span>
+          <span className="sm:hidden">Novo</span>
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800"
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800"
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
-        <div className="flex items-center gap-2 mb-4">
-          <span className="w-7 h-7 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-500" />
-          </span>
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Filtros</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-8 gap-3">
-          <div className="relative xl:col-span-2">
+
+        {/* Primary filter row: always visible */}
+        <div className="p-4 flex items-center gap-2">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Buscar descrição..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
-          <select
-            value={filterCategory}
-            onChange={e => setFilterCategory(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
+          <button
+            onClick={() => setShowMoreFilters(v => !v)}
+            className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border text-sm font-semibold transition-all flex-shrink-0 ${
+              hasExtraFilters
+                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+                : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
           >
-            <option value="">Todas categorias</option>
-            {categories.map(c => (
-              <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-            ))}
-          </select>
-          <select
-            value={filterPayment}
-            onChange={e => setFilterPayment(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
-          >
-            <option value="">Todos pagamentos</option>
-            {paymentMethods.length > 0
-              ? paymentMethods.map(pm => <option key={pm.id} value={pm.name}>{pm.icon} {pm.name}</option>)
-              : <><option value="Crédito">💳 Crédito</option><option value="Pix / Débito">⚡ Pix/Débito</option><option value="Dinheiro">💵 Dinheiro</option></>
-            }
-          </select>
-          <select
-            value={filterPerson}
-            onChange={e => setFilterPerson(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
-          >
-            <option value="">Todas as pessoas</option>
-            {people.map(p => (
-              <option key={p.id} value={p.name}>{p.name}</option>
-            ))}
-          </select>
-          <select
-            value={filterPaid}
-            onChange={e => setFilterPaid(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
-          >
-            <option value="">Todos os status</option>
-            <option value="paid">✓ Pagos</option>
-            <option value="pending">⏳ Pendentes</option>
-          </select>
-          <input
-            type="month"
-            value={filterMonth}
-            onChange={e => setFilterMonth(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
-          />
-          <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="R$ min"
-              value={filterMinValue}
-              onChange={e => setFilterMinValue(e.target.value)}
-              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200"
-            />
-            <input
-              type="number"
-              placeholder="R$ max"
-              value={filterMaxValue}
-              onChange={e => setFilterMaxValue(e.target.value)}
-              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200"
-            />
-          </div>
+            <SlidersHorizontal className="w-4 h-4" />
+            <span className="hidden sm:inline">Filtros</span>
+            {hasExtraFilters && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+            {showMoreFilters ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+          {(search || hasExtraFilters) && (
+            <button onClick={clearAll}
+              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors flex-shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
+
+        {/* Extra filters — expandable */}
+        {showMoreFilters && (
+          <div className="px-4 pb-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className={inputClass}>
+                <option value="">Todas as categorias</option>
+                {categories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+              </select>
+              <select value={filterPayment} onChange={e => setFilterPayment(e.target.value)} className={inputClass}>
+                <option value="">Todas as formas</option>
+                {paymentMethods.length > 0
+                  ? paymentMethods.map(pm => <option key={pm.id} value={pm.name}>{pm.icon} {pm.name}</option>)
+                  : <><option value="Crédito">💳 Crédito</option><option value="Pix / Débito">⚡ Pix/Débito</option><option value="Dinheiro">💵 Dinheiro</option></>
+                }
+              </select>
+              <select value={filterPerson} onChange={e => setFilterPerson(e.target.value)} className={inputClass}>
+                <option value="">Todas as pessoas</option>
+                {people.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+              </select>
+              <select value={filterPaid} onChange={e => setFilterPaid(e.target.value)} className={inputClass}>
+                <option value="">Todos os status</option>
+                <option value="paid">✓ Pagos</option>
+                <option value="pending">⏳ Pendentes</option>
+              </select>
+              <input type="month" value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className={inputClass} />
+              <div className="flex gap-2">
+                <input type="number" placeholder="R$ mín" value={filterMinValue} onChange={e => setFilterMinValue(e.target.value)} className={inputClass} />
+                <input type="number" placeholder="R$ máx" value={filterMaxValue} onChange={e => setFilterMaxValue(e.target.value)} className={inputClass} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800"
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden"
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         {loading ? (
           <div className="flex items-center justify-center h-32">
             <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
           </div>
         ) : (
-          <TransactionTable transactions={filtered} onDelete={handleDelete} showEditLink paymentMethods={paymentMethods} onTogglePaid={handleTogglePaid} />
+          <div className="p-4 sm:p-6">
+            <TransactionTable transactions={filtered} onDelete={handleDelete} showEditLink paymentMethods={paymentMethods} onTogglePaid={handleTogglePaid} />
+          </div>
         )}
       </div>
     </div>
