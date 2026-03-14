@@ -2,12 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard, Moon, Sun, LogOut } from 'lucide-react'
+import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard, Moon, Sun, LogOut, Shield } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/lib/theme'
 import { useAuth } from '@/lib/auth'
 
-const links = [
+const ADMIN_EMAIL = 'automacao.everads@gmail.com'
+
+const baseLinks = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/lancamentos', label: 'Lançamentos', icon: List },
   { href: '/lancamentos/novo', label: 'Novo Gasto', icon: PlusCircle },
@@ -26,6 +28,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { theme, toggle } = useTheme()
   const { user, signOut } = useAuth()
+  const isAdmin = user?.email === ADMIN_EMAIL
+  const links = isAdmin ? [...baseLinks, { href: '/admin', label: 'Admin', icon: Shield }] : baseLinks
 
   const content = (
     <aside className="h-full w-[260px] bg-slate-900 flex flex-col">
