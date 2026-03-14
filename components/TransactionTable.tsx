@@ -18,11 +18,11 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
           <span className="text-2xl">📭</span>
         </div>
-        <p className="text-slate-500 font-semibold">Nenhum lançamento encontrado</p>
-        <p className="text-sm text-slate-400 mt-1">Adicione seu primeiro gasto!</p>
+        <p className="text-slate-500 dark:text-slate-400 font-semibold">Nenhum lançamento encontrado</p>
+        <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Adicione seu primeiro gasto!</p>
       </div>
     )
   }
@@ -31,23 +31,23 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
     <div className="overflow-x-auto -mx-2 md:mx-0">
       <table className="w-full min-w-[400px]">
         <thead>
-          <tr className="border-b border-slate-100">
-            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Data</th>
-            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Descrição</th>
-            <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoria</th>
-            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pagamento</th>
-            <th className="hidden lg:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pessoa</th>
-            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pago</th>
-            <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Valor</th>
+          <tr className="border-b border-slate-100 dark:border-slate-800">
+            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Data</th>
+            <th className="text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Descrição</th>
+            <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Categoria</th>
+            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pagamento</th>
+            <th className="hidden lg:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pessoa</th>
+            <th className="hidden sm:table-cell text-left py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pago</th>
+            <th className="text-right py-3 px-3 md:px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Valor</th>
             {(onDelete || showEditLink) && <th className="py-3 px-3 md:px-4"></th>}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50">
+        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
           {transactions.map((t) => (
-            <tr key={t.id} className="hover:bg-indigo-50/30 transition-colors group">
-              <td className="py-3.5 px-3 md:px-4 text-sm text-slate-400 whitespace-nowrap">{formatDate(t.date)}</td>
+            <tr key={t.id} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors group">
+              <td className="py-3.5 px-3 md:px-4 text-sm text-slate-400 dark:text-slate-500 whitespace-nowrap">{formatDate(t.date)}</td>
               <td className="py-3.5 px-3 md:px-4">
-                <p className="text-sm font-medium text-slate-700">{t.description}</p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t.description}</p>
                 <div className="flex flex-wrap gap-1 mt-1 sm:hidden">
                   {t.category && (
                     <span
@@ -77,7 +77,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                     {t.category.icon} {t.category.name}
                   </span>
                 ) : (
-                  <span className="text-sm text-slate-300">—</span>
+                  <span className="text-sm text-slate-300 dark:text-slate-600">—</span>
                 )}
               </td>
               <td className="hidden sm:table-cell py-3.5 px-3 md:px-4">
@@ -92,24 +92,34 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                     {t.person}
                   </span>
                 ) : (
-                  <span className="text-sm text-slate-300">—</span>
+                  <span className="text-sm text-slate-300 dark:text-slate-600">—</span>
                 )}
               </td>
               <td className="hidden sm:table-cell py-3.5 px-3 md:px-4">
                 {t.paid ? (
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 cursor-pointer hover:bg-emerald-200 transition-colors select-none" onClick={() => onTogglePaid?.(t.id, false)}>✓ Pago</span>
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 cursor-pointer hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-colors select-none"
+                    onClick={() => onTogglePaid?.(t.id, false)}
+                  >
+                    ✓ Pago
+                  </span>
                 ) : (
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 cursor-pointer hover:bg-amber-200 transition-colors select-none" onClick={() => onTogglePaid?.(t.id, true)}>⏳ Pendente</span>
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-900/60 transition-colors select-none"
+                    onClick={() => onTogglePaid?.(t.id, true)}
+                  >
+                    ⏳ Pendente
+                  </span>
                 )}
               </td>
-              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-indigo-600 whitespace-nowrap">{formatCurrency(t.amount)}</td>
+              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {(onDelete || showEditLink) && (
                 <td className="py-3.5 px-3 md:px-4">
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     {showEditLink && (
                       <Link
                         href={`/lancamentos/${t.id}/editar`}
-                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </Link>
@@ -117,7 +127,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                     {onDelete && (
                       <button
                         onClick={() => onDelete(t.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
