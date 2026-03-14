@@ -44,7 +44,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
         </thead>
         <tbody className="divide-y divide-slate-50">
           {transactions.map((t) => (
-            <tr key={t.id} className="hover:bg-blue-50/30 transition-colors group">
+            <tr key={t.id} className="hover:bg-indigo-50/30 transition-colors group">
               <td className="py-3.5 px-3 md:px-4 text-sm text-slate-400 whitespace-nowrap">{formatDate(t.date)}</td>
               <td className="py-3.5 px-3 md:px-4">
                 <p className="text-sm font-medium text-slate-700">{t.description}</p>
@@ -102,14 +102,14 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 cursor-pointer hover:bg-amber-200 transition-colors select-none" onClick={() => onTogglePaid?.(t.id, true)}>⏳ Pendente</span>
                 )}
               </td>
-              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-blue-600 whitespace-nowrap">{formatCurrency(t.amount)}</td>
+              <td className="py-3.5 px-3 md:px-4 text-right font-bold text-indigo-600 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {(onDelete || showEditLink) && (
                 <td className="py-3.5 px-3 md:px-4">
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     {showEditLink && (
                       <Link
                         href={`/lancamentos/${t.id}/editar`}
-                        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </Link>
