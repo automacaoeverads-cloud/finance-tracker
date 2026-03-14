@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard } from 'lucide-react'
+import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard, Moon, Sun } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/lib/theme'
 
 const links = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -22,6 +23,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
+  const { theme, toggle } = useTheme()
 
   const content = (
     <aside className="h-full w-[260px] bg-slate-900 flex flex-col">
@@ -87,13 +89,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Footer */}
       <div className="px-5 py-4 border-t border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0">
             <span className="text-xs font-bold text-indigo-400">FT</span>
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold text-slate-300">Finance Tracker</p>
             <p className="text-[10px] text-slate-500">v1.0</p>
           </div>
+          {/* Dark mode toggle */}
+          <button
+            onClick={toggle}
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors flex-shrink-0"
+            title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
       </div>
     </aside>
@@ -101,21 +111,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop: fixed sidebar */}
       <div className="hidden md:flex fixed left-0 top-0 h-full w-[260px] z-30">
         {content}
       </div>
-
-      {/* Mobile: drawer with overlay */}
       {isOpen && (
         <div className="md:hidden fixed inset-0 z-40 flex">
-          <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
-            onClick={onClose}
-          />
-          <div className="relative z-50 w-[260px] flex-shrink-0">
-            {content}
-          </div>
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="relative z-50 w-[260px] flex-shrink-0">{content}</div>
         </div>
       )}
     </>
