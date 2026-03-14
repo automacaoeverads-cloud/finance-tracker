@@ -153,7 +153,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title={filterPerson ? `Total — ${filterPerson}` : 'Total no período'}
           value={formatCurrency(totalFiltered)}
@@ -189,9 +189,9 @@ export default function Dashboard() {
       </div>
 
       {/* ── Charts: Evolução + Categorias ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        <div className="xl:col-span-2 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800"
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800"
           style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}
         >
           <h3 className="font-semibold text-slate-700 dark:text-slate-200">Evolução Mensal</h3>
