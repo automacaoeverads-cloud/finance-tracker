@@ -100,7 +100,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
             CONTROLE FINANCEIRO PESSOAL
           </div>
 
-          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight max-w-3xl">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight max-w-3xl">
             Seu dinheiro,{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300">
               sob controle
@@ -129,7 +129,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Social proof */}
-          <div className="flex items-center gap-6 text-sm text-slate-500 mb-16">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-slate-500 mb-16">
             {[
               { icon: CheckCircle, text: 'Sem cartão de crédito' },
               { icon: ShieldCheck, text: 'Dados privados e seguros' },
