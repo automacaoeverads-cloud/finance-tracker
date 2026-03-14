@@ -68,8 +68,8 @@ export default function AdminPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+          <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Admin</h1>
@@ -98,7 +98,7 @@ export default function AdminPage() {
           <p className="text-3xl font-bold text-slate-800 dark:text-white">{users.filter(u => u.confirmed_at).length}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800"
-          style={{ borderLeft: '4px solid #6366f1' }}>
+          style={{ borderLeft: '4px solid #10b981' }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-1">Ativos hoje</p>
           <p className="text-3xl font-bold text-slate-800 dark:text-white">
             {users.filter(u => {
@@ -123,7 +123,7 @@ export default function AdminPage() {
 
         {loading ? (
           <div className="flex items-center justify-center h-32">
-            <div className="w-7 h-7 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+            <div className="w-7 h-7 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
           </div>
         ) : error ? (
           <div className="text-center py-12 text-rose-500 text-sm">{error}</div>
@@ -143,8 +143,8 @@ export default function AdminPage() {
                   <tr key={u.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center flex-shrink-0">
-                          <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+                        <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                             {u.email?.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -153,7 +153,7 @@ export default function AdminPage() {
                           <p className="text-xs text-slate-400 dark:text-slate-500 font-mono truncate">{u.id.slice(0, 8)}…</p>
                         </div>
                         {u.email === ADMIN_EMAIL && (
-                          <span className="flex-shrink-0 text-xs font-semibold text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-900/30 px-2 py-0.5 rounded-full">Admin</span>
+                          <span className="flex-shrink-0 text-xs font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Admin</span>
                         )}
                       </div>
                     </td>
