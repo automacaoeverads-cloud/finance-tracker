@@ -4,9 +4,11 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase, Person, getPersonColor } from '@/lib/supabase'
+import { useAuth } from '@/lib/auth'
 import { UserPlus, Trash2, Users } from 'lucide-react'
 
 export default function Pessoas() {
+  const { user } = useAuth()
   const [people, setPeople] = useState<Person[]>([])
   const [loading, setLoading] = useState(true)
   const [newName, setNewName] = useState('')
@@ -26,7 +28,7 @@ export default function Pessoas() {
     const name = newName.trim()
     if (!name) return
     setAdding(true)
-    const { data, error } = await supabase.from('people').insert({ name }).select().single()
+    const { data, error } = await supabase.from('people').insert({ name, user_id: user?.id }).select().single()
     if (!error && data) {
       setPeople(prev => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)))
       setNewName('')
