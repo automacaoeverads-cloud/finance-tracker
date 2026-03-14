@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { supabase, Transaction, Category } from '@/lib/supabase'
+import { supabase, Transaction, Category, PaymentMethodDB } from '@/lib/supabase'
 import { formatCurrency, formatMonth } from '@/lib/utils'
 import { CategoryPieChart, MonthlyAreaChart } from '@/components/Charts'
 import PaymentBadge from '@/components/PaymentBadge'
@@ -11,7 +11,7 @@ import PaymentBadge from '@/components/PaymentBadge'
 export default function Relatorios() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [categories, setCategories] = useState<Category[]>([])
-  const [paymentMethods, setPaymentMethods] = useState<{ id: string; name: string; icon: string; color: string }[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
