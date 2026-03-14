@@ -63,13 +63,13 @@ export default function Pessoas() {
             value={newName}
             onChange={e => setNewName(e.target.value)}
             placeholder="Nome da pessoa..."
-            className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
+            className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
             required
           />
           <button
             type="submit"
             disabled={adding || !newName.trim()}
-            className="px-6 py-3 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-70 flex items-center gap-2 shadow-sm"
+            className="px-6 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-70 flex items-center gap-2 shadow-sm"
           >
             {adding ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -95,7 +95,7 @@ export default function Pessoas() {
 
         {loading ? (
           <div className="flex items-center justify-center h-24">
-            <div className="w-6 h-6 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+            <div className="w-6 h-6 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
           </div>
         ) : people.length === 0 ? (
           <div className="text-center py-8">
@@ -110,7 +110,7 @@ export default function Pessoas() {
             {people.map(person => (
               <li
                 key={person.id}
-                className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-blue-50/30 dark:hover:bg-indigo-900/10 transition-colors group"
+                className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-blue-50/30 dark:hover:bg-emerald-900/10 transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <div
