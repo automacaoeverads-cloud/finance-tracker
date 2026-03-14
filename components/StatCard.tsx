@@ -22,7 +22,7 @@ export default function StatCard({ title, value, subtitle, icon, iconBg = 'bg-em
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">{title}</p>
-          <p className="text-2xl font-bold text-slate-800 dark:text-white leading-none mb-1">{value}</p>
+          <p className="text-lg sm:text-2xl font-bold text-slate-800 dark:text-white leading-none mb-1 truncate">{value}</p>
           {subtitle && (
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">{subtitle}</p>
           )}
