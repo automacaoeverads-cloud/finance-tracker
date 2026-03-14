@@ -67,21 +67,21 @@ export default function Relatorios() {
           type="month"
           value={selectedMonth}
           onChange={e => setSelectedMonth(e.target.value)}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-teal-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-white"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-teal-100 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300 bg-white dark:bg-slate-800"
         />
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-teal-50 text-center">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-teal-50 dark:border-slate-800 text-center">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Total do mês</p>
           <p className="text-2xl font-bold text-teal-700">{formatCurrency(totalMonth)}</p>
         </div>
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-teal-50 text-center">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-teal-50 dark:border-slate-800 text-center">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Lançamentos</p>
           <p className="text-2xl font-bold text-teal-700">{monthTxns.length}</p>
         </div>
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-teal-50 text-center">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-teal-50 dark:border-slate-800 text-center">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Média por gasto</p>
           <p className="text-2xl font-bold text-teal-700">{formatCurrency(totalMonth / (monthTxns.length || 1))}</p>
         </div>
@@ -89,13 +89,13 @@ export default function Relatorios() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-teal-50 dark:border-slate-800">
           <h3 className="font-semibold text-teal-900 mb-4">Por Categoria — {formatMonth(selectedMonth)}</h3>
           {pieData.length > 0 ? <CategoryPieChart data={pieData} /> : (
             <p className="text-center text-gray-400 py-16 text-sm">Sem dados para este mês</p>
           )}
         </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-teal-50 dark:border-slate-800">
           <h3 className="font-semibold text-teal-900 mb-4">Evolução — Últimos 12 Meses</h3>
           <MonthlyAreaChart data={monthlyData} />
         </div>
@@ -103,7 +103,7 @@ export default function Relatorios() {
 
       {/* Payment breakdown */}
       {paymentData.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-teal-50 dark:border-slate-800">
           <h3 className="font-semibold text-teal-900 mb-4">Por Forma de Pagamento — {formatMonth(selectedMonth)}</h3>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-center">
             <PaymentBarChart data={paymentData} />
@@ -141,7 +141,7 @@ export default function Relatorios() {
 
       {/* Category + Top5 */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-teal-50 dark:border-slate-800">
           <h3 className="font-semibold text-teal-900 mb-4">Por Categoria</h3>
           {pieData.length > 0 ? (
             <div className="space-y-3">
@@ -167,7 +167,7 @@ export default function Relatorios() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-50">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-teal-50 dark:border-slate-800">
           <h3 className="font-semibold text-teal-900 mb-4">Top 5 Maiores Gastos</h3>
           {top5.length > 0 ? (
             <div className="space-y-3">
