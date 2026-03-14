@@ -5,10 +5,12 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, Category, PaymentMethodDB, Person } from '@/lib/supabase'
+import { useAuth } from '@/lib/auth'
 import { CheckCircle, PlusCircle } from 'lucide-react'
 
 export default function NovoLancamento() {
   const router = useRouter()
+  const { user } = useAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const [people, setPeople] = useState<Person[]>([])
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodDB[]>([])
@@ -62,6 +64,7 @@ export default function NovoLancamento() {
       date: form.date,
       person: form.person || null,
       paid: form.paid,
+      user_id: user?.id,
     })
     setLoading(false)
     if (!error) {
