@@ -29,61 +29,57 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
 
   return (
     <div className="w-full overflow-x-hidden">
-      {/* ── Mobile layout: card por linha ── */}
+      {/* ── Mobile layout: card compacto ── */}
       <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
         {transactions.map((t) => (
-          <div key={t.id} className="py-3 flex items-start gap-3">
-            {/* Conteúdo principal */}
+          <div key={t.id} className="py-2.5 flex items-center gap-2">
+            {/* Dot de status */}
+            <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${t.paid ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+
+            {/* Conteúdo */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate leading-snug">{t.description}</p>
-                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0 ml-1">{formatCurrency(t.amount)}</span>
+              {/* Linha 1: descrição + valor */}
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{t.description}</p>
+                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0">{formatCurrency(t.amount)}</span>
               </div>
-              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                <span className="text-xs text-slate-400 dark:text-slate-500">{formatDate(t.date)}</span>
+              {/* Linha 2: data + badges todos na mesma linha */}
+              <div className="flex flex-wrap items-center gap-1 mt-1">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 mr-0.5">{formatDate(t.date)}</span>
                 {t.category && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700 dark:text-slate-800"
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-medium text-slate-700 dark:text-slate-800"
                     style={{ backgroundColor: t.category.color + '80' }}>
                     {t.category.icon} {t.category.name}
                   </span>
                 )}
                 <PaymentBadge method={t.payment_method} methods={paymentMethods} />
-              </div>
-              <div className="flex items-center gap-2 mt-1.5">
                 {t.person && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-slate-700"
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-medium text-slate-700"
                     style={{ backgroundColor: getPersonColor(t.person) }}>
-                    👤 {t.person}
+                    {t.person}
                   </span>
                 )}
                 {onTogglePaid && (
-                  t.paid ? (
-                    <button onClick={() => onTogglePaid(t.id, false)}
-                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
-                      ✓ Pago
-                    </button>
-                  ) : (
-                    <button onClick={() => onTogglePaid(t.id, true)}
-                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400">
-                      ⏳ Pendente
-                    </button>
-                  )
+                  t.paid
+                    ? <button onClick={() => onTogglePaid(t.id, false)} className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">✓ Pago</button>
+                    : <button onClick={() => onTogglePaid(t.id, true)} className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400">⏳ Pendente</button>
                 )}
               </div>
             </div>
-            {/* Ações */}
+
+            {/* Ações compactas */}
             {(onDelete || showEditLink) && (
-              <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+              <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
                 {showEditLink && (
                   <Link href={`/lancamentos/${t.id}/editar`}
-                    className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl transition-colors">
-                    <Pencil className="w-4 h-4" />
+                    className="p-1.5 text-slate-300 dark:text-slate-600 hover:text-emerald-500 rounded-lg transition-colors">
+                    <Pencil className="w-3.5 h-3.5" />
                   </Link>
                 )}
                 {onDelete && (
                   <button onClick={() => onDelete(t.id)}
-                    className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors">
-                    <Trash2 className="w-4 h-4" />
+                    className="p-1.5 text-slate-300 dark:text-slate-600 hover:text-rose-500 rounded-lg transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
