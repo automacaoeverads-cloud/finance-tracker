@@ -36,12 +36,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Logo */}
       <div className="px-6 py-5 flex items-center justify-between border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-900/40">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-900/40">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="font-bold text-white text-base leading-tight">Finance</h1>
-            <p className="text-xs text-indigo-400 font-semibold tracking-wide">TRACKER</p>
+            <p className="text-xs text-emerald-400 font-semibold tracking-wide">TRACKER</p>
           </div>
         </div>
         {onClose && (
@@ -71,21 +71,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-medium group',
                 active
-                  ? 'bg-indigo-500/20 text-white'
+                  ? 'bg-emerald-500/20 text-white'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
               )}
             >
               <span className={cn(
                 'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors',
                 active
-                  ? 'bg-indigo-500/30 text-indigo-400'
+                  ? 'bg-emerald-500/30 text-emerald-400'
                   : 'bg-slate-800 text-slate-500 group-hover:bg-slate-700 group-hover:text-slate-300'
               )}>
                 <Icon className="w-4 h-4" />
               </span>
               <span>{label}</span>
               {active && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />
               )}
             </Link>
           )
@@ -95,8 +95,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Footer */}
       <div className="px-5 py-4 border-t border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-indigo-600/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-indigo-400">
+          <div className="w-8 h-8 rounded-full bg-emerald-600/30 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold text-emerald-400">
               {user?.email?.charAt(0).toUpperCase() ?? 'U'}
             </span>
           </div>
