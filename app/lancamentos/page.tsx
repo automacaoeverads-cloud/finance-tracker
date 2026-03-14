@@ -80,7 +80,7 @@ export default function Lancamentos() {
         </div>
         <Link
           href="/lancamentos/novo"
-          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+          className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           Novo Gasto
@@ -104,13 +104,13 @@ export default function Lancamentos() {
               placeholder="Buscar descrição..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
             />
           </div>
           <select
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
           >
             <option value="">Todas categorias</option>
             {categories.map(c => (
@@ -120,7 +120,7 @@ export default function Lancamentos() {
           <select
             value={filterPayment}
             onChange={e => setFilterPayment(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
           >
             <option value="">Todos pagamentos</option>
             {paymentMethods.length > 0
@@ -131,7 +131,7 @@ export default function Lancamentos() {
           <select
             value={filterPerson}
             onChange={e => setFilterPerson(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
           >
             <option value="">Todas as pessoas</option>
             {people.map(p => (
@@ -141,7 +141,7 @@ export default function Lancamentos() {
           <select
             value={filterPaid}
             onChange={e => setFilterPaid(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
           >
             <option value="">Todos os status</option>
             <option value="paid">✓ Pagos</option>
@@ -151,7 +151,7 @@ export default function Lancamentos() {
             type="month"
             value={filterMonth}
             onChange={e => setFilterMonth(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
+            className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:border-slate-700"
           />
           <div className="flex gap-2">
             <input
@@ -159,14 +159,14 @@ export default function Lancamentos() {
               placeholder="R$ min"
               value={filterMinValue}
               onChange={e => setFilterMinValue(e.target.value)}
-              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200"
+              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200"
             />
             <input
               type="number"
               placeholder="R$ max"
               value={filterMaxValue}
               onChange={e => setFilterMaxValue(e.target.value)}
-              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200"
+              className="w-1/2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200"
             />
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function Lancamentos() {
         style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
         {loading ? (
           <div className="flex items-center justify-center h-32">
-            <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
           </div>
         ) : (
           <TransactionTable transactions={filtered} onDelete={handleDelete} showEditLink paymentMethods={paymentMethods} onTogglePaid={handleTogglePaid} />
