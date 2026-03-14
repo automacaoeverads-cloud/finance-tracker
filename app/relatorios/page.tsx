@@ -81,20 +81,20 @@ export default function Relatorios() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 text-center" style={{ borderLeft: '4px solid #10b981', ...cardStyle }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Total do mês</p>
-          <p className="text-3xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalMonth)}</p>
+          <p className="text-xl sm:text-3xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalMonth)}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 text-center" style={{ borderLeft: '4px solid #10b981', ...cardStyle }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Lançamentos</p>
-          <p className="text-3xl font-bold text-slate-800 dark:text-white">{monthTxns.length}</p>
+          <p className="text-xl sm:text-3xl font-bold text-slate-800 dark:text-white">{monthTxns.length}</p>
         </div>
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 text-center" style={{ borderLeft: '4px solid #8b5cf6', ...cardStyle }}>
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Média por gasto</p>
-          <p className="text-3xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalMonth / (monthTxns.length || 1))}</p>
+          <p className="text-xl sm:text-3xl font-bold text-slate-800 dark:text-white">{formatCurrency(totalMonth / (monthTxns.length || 1))}</p>
         </div>
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className={cardClass} style={cardStyle}>
           <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-1">Por Categoria</h3>
           <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">{formatMonth(selectedMonth)}</p>
@@ -112,7 +112,7 @@ export default function Relatorios() {
       </div>
 
       {/* Category breakdown + Top 5 */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className={cardClass} style={cardStyle}>
           <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-1">Distribuição por Categoria</h3>
           <p className="text-xs text-slate-400 dark:text-slate-500 mb-5">{formatMonth(selectedMonth)}</p>
