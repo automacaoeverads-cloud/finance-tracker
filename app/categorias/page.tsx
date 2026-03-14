@@ -4,12 +4,14 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase, Category } from '@/lib/supabase'
+import { useAuth } from '@/lib/auth'
 import { Trash2, Plus, Pencil, Tag, X, Check } from 'lucide-react'
 import { CATEGORY_COLORS } from '@/lib/utils'
 
 const ICONS = ['🍽️', '🚗', '🏠', '🎮', '🛍️', '💊', '✈️', '📚', '💼', '🎵', '🐾', '💡', '📱', '🏋️', '☕']
 
 export default function Categorias() {
+  const { user } = useAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -29,7 +31,7 @@ export default function Categorias() {
     if (editingId) {
       await supabase.from('categories').update(form).eq('id', editingId)
     } else {
-      await supabase.from('categories').insert(form)
+      await supabase.from('categories').insert({ ...form, user_id: user?.id })
     }
     setForm({ name: '', color: '#BFDBFE', icon: '🍽️' })
     setShowForm(false)
