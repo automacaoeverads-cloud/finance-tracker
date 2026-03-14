@@ -24,16 +24,16 @@ function LoginGate({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!user) {
-    async function handleLogin(e: React.FormEvent) {
-      e.preventDefault()
-      setError('')
-      setSubmitting(true)
-      const { error: err } = await signIn(email, password)
-      setSubmitting(false)
-      if (err) setError('Email ou senha incorretos.')
-    }
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    const { error: err } = await signIn(email, password)
+    setSubmitting(false)
+    if (err) setError('Email ou senha incorretos.')
+  }
 
+  if (!user) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
         {/* Background decoration */}
