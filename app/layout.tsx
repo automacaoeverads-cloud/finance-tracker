@@ -20,23 +20,23 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <div className="flex min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
+        <div className="flex min-h-screen" style={{ backgroundColor: '#F4F6FB' }}>
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
           <div className="flex-1 flex flex-col md:ml-[260px]">
             {/* Mobile header */}
-            <header className="md:hidden sticky top-0 z-20 bg-white border-b border-slate-100 px-4 py-3 flex items-center gap-3 shadow-sm">
+            <header className="md:hidden sticky top-0 z-20 bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="p-2 rounded-xl text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
                 <Menu className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm">
                   <TrendingUp className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold text-slate-800 text-base">Finance Tracker</span>
+                <span className="font-bold text-white text-base">Finance Tracker</span>
               </div>
             </header>
 
