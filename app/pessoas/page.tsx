@@ -123,7 +123,7 @@ export default function Pessoas() {
                 </div>
                 <button
                   onClick={() => handleDelete(person.id, person.name)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-slate-400 hover:text-red-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg"
+                  className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity p-2 text-slate-400 hover:text-red-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
