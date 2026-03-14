@@ -115,7 +115,7 @@ export default function TransactionTable({ transactions, onDelete, showEditLink 
               <td className="py-3.5 px-3 md:px-4 text-right font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(t.amount)}</td>
               {(onDelete || showEditLink) && (
                 <td className="py-3.5 px-3 md:px-4">
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     {showEditLink && (
                       <Link
                         href={`/lancamentos/${t.id}/editar`}
