@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard, Moon, Sun } from 'lucide-react'
+import { LayoutDashboard, List, Tag, PlusCircle, TrendingUp, X, BarChart2, Users, CreditCard, Moon, Sun, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/lib/theme'
+import { useAuth } from '@/lib/auth'
 
 const links = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -24,6 +25,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { theme, toggle } = useTheme()
+  const { signOut } = useAuth()
 
   const content = (
     <aside className="h-full w-[260px] bg-slate-900 flex flex-col">
@@ -103,6 +105,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          {/* Logout */}
+          <button
+            onClick={signOut}
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-900/60 flex items-center justify-center text-slate-400 hover:text-rose-400 transition-colors flex-shrink-0"
+            title="Sair"
+          >
+            <LogOut className="w-4 h-4" />
           </button>
         </div>
       </div>
