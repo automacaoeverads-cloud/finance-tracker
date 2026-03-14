@@ -60,14 +60,14 @@ export default function Categorias() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Categorias</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
-            <span className="font-semibold text-slate-600">{categories.length}</span> categorias ativas
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Categorias</h1>
+          <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+            <span className="font-semibold text-slate-600 dark:text-slate-300">{categories.length}</span> categorias ativas
           </p>
         </div>
         <button
           onClick={() => { setShowForm(true); setEditingId(null); setForm({ name: '', color: '#BFDBFE', icon: '🍽️' }) }}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-colors shadow-sm"
+          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           Nova Categoria
@@ -76,11 +76,11 @@ export default function Categorias() {
 
       {/* Form */}
       {showForm && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100"
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800"
           style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' }}>
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-semibold text-slate-700 flex items-center gap-2">
-              <span className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+            <h3 className="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+              <span className="w-7 h-7 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                 <Tag className="w-3.5 h-3.5 text-blue-500" />
               </span>
               {editingId ? 'Editar Categoria' : 'Nova Categoria'}
@@ -93,18 +93,18 @@ export default function Categorias() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {/* Nome */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Nome</label>
+              <label className="block text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Nome</label>
               <input
                 value={form.name}
                 onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
                 placeholder="Ex: Alimentação"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 bg-slate-50/60 text-slate-700 placeholder:text-slate-400"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-slate-50/60 dark:bg-slate-800 dark:text-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:border-slate-700"
               />
             </div>
 
             {/* Cor */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Cor</label>
+              <label className="block text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Cor</label>
               <div className="flex flex-wrap gap-2">
                 {Object.keys(CATEGORY_COLORS).map(color => (
                   <button
@@ -126,7 +126,7 @@ export default function Categorias() {
 
             {/* Ícone */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Ícone</label>
+              <label className="block text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-2">Ícone</label>
               <div className="flex flex-wrap gap-1">
                 {ICONS.map(icon => (
                   <button
@@ -145,16 +145,16 @@ export default function Categorias() {
             </div>
           </div>
 
-          <div className="flex gap-3 mt-5 pt-4 border-t border-slate-100">
+          <div className="flex gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               onClick={cancelForm}
-              className="px-4 py-2 rounded-xl border border-slate-200 text-sm text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Cancelar
             </button>
             <button
               onClick={handleSave}
-              className="px-5 py-2 rounded-xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-sm"
+              className="px-5 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm"
             >
               <Check className="w-4 h-4" />
               Salvar
@@ -166,14 +166,14 @@ export default function Categorias() {
       {/* Grid */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map(cat => (
             <div
               key={cat.id}
-              className="bg-white rounded-2xl p-5 border border-slate-100 flex items-center justify-between group hover:shadow-md transition-all duration-200"
+              className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:shadow-md transition-all duration-200"
               style={{ boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)' }}
             >
               <div className="flex items-center gap-3.5">
@@ -184,20 +184,20 @@ export default function Categorias() {
                   {cat.icon}
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-700 text-sm">{cat.name}</p>
-                  <p className="text-xs text-slate-400 mt-0.5 font-medium">Categoria</p>
+                  <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{cat.name}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Categoria</p>
                 </div>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => startEdit(cat)}
-                  className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                 >
                   <Pencil className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => handleDelete(cat.id)}
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -206,11 +206,11 @@ export default function Categorias() {
           ))}
           {categories.length === 0 && (
             <div className="col-span-3 text-center py-16">
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Tag className="w-6 h-6 text-blue-300" />
               </div>
-              <p className="text-slate-500 font-semibold">Nenhuma categoria ainda</p>
-              <p className="text-sm text-slate-400 mt-1">Crie a primeira para organizar seus gastos!</p>
+              <p className="text-slate-500 dark:text-slate-400 font-semibold">Nenhuma categoria ainda</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Crie a primeira para organizar seus gastos!</p>
             </div>
           )}
         </div>
