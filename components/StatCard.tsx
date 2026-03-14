@@ -10,7 +10,7 @@ interface StatCardProps {
   accent?: string
 }
 
-export default function StatCard({ title, value, subtitle, icon, iconBg = 'bg-indigo-100', trend, accent }: StatCardProps) {
+export default function StatCard({ title, value, subtitle, icon, iconBg = 'bg-emerald-100', trend, accent }: StatCardProps) {
   return (
     <div
       className="bg-white dark:bg-slate-900 rounded-2xl p-5 hover:shadow-md transition-all duration-200 group relative overflow-hidden"
