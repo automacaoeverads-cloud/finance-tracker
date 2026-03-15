@@ -1,9 +1,14 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+/**
+ * Client Supabase para uso no browser (Client Components).
+ * Usa @supabase/ssr que armazena a sessão em cookies,
+ * permitindo que o middleware server-side leia a autenticação.
+ */
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
 
 export type Category = {
   id: string
