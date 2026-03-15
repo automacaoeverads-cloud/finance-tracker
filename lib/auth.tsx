@@ -38,15 +38,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  // ─── signIn via API route (com rate limiting server-side) ─────────────────
   async function signIn(email: string, password: string) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error: error?.message ?? null }
+    let res: Response
+    try {
+      res = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+    } catch {
+      return { error: 'Erro de conexão. Verifique sua internet.' }
+    }
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      return { error: data.error ?? 'Erro ao fazer login.' }
+    }
+
+    // Restaurar sessão no cliente Supabase com os tokens retornados
+    const { error: sessionErr } = await supabase.auth.setSession({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+    })
+
+    return { error: sessionErr?.message ?? null }
   }
 
+  // ─── signUp com proteção contra email enumeration ─────────────────────────
   async function signUp(email: string, password: string) {
     const { error } = await supabase.auth.signUp({ email, password })
-    if (error) return { error: error.message }
-    // Auto sign-in after sign-up
+
+    if (error) {
+      // Mascarar "User already registered" para não revelar emails cadastrados
+      const isEnumerable =
+        error.message?.toLowerCase().includes('already registered') ||
+        (error as { code?: string }).code === 'user_already_exists'
+
+      if (isEnumerable) {
+        // Retornar mensagem genérica — não confirmar nem negar existência do email
+        return { error: 'Não foi possível criar a conta com este email. Tente fazer login.' }
+      }
+
+      return { error: error.message }
+    }
+
+    // Auto sign-in após cadastro
     const { error: loginErr } = await supabase.auth.signInWithPassword({ email, password })
     return { error: loginErr?.message ?? null }
   }
