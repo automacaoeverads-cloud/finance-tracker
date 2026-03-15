@@ -1,47 +1,106 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!serviceRoleKey) {
-    return NextResponse.json({
-      error: 'SUPABASE_SERVICE_ROLE_KEY not set',
-      manual_sql: `
-ALTER TABLE transactions ADD COLUMN IF NOT EXISTS person text;
+/**
+ * Rota de setup do banco — DESABILITADA em produção pelo middleware.
+ * Em desenvolvimento, retorna as migrations SQL para execução manual.
+ */
+export async function GET(req: NextRequest) {
+  // Dupla proteção: além do middleware, verificar aqui também
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json(
+      { error: 'Endpoint desabilitado em produção.' },
+      { status: 404 }
+    )
+  }
+
+  const migrations = `
+-- ============================================
+-- Finance Tracker — Schema completo
+-- Execute no Supabase SQL Editor:
+-- https://supabase.com/dashboard/project/wqaugqgixkostcscfnsq/sql
+-- ============================================
+
+-- Extensões
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Categorias
+CREATE TABLE IF NOT EXISTS categories (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name text NOT NULL,
+  color text NOT NULL DEFAULT '#b2f0e8',
+  icon text NOT NULL DEFAULT '🏷️',
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT now() NOT NULL
+);
+
+-- RLS em categories
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "users_own_categories" ON categories;
+CREATE POLICY "users_own_categories" ON categories
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+
+-- Formas de pagamento
+CREATE TABLE IF NOT EXISTS payment_methods (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name text NOT NULL,
+  icon text NOT NULL DEFAULT '💳',
+  color text NOT NULL DEFAULT '#e8d5f5',
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT now() NOT NULL,
+  UNIQUE(name, user_id)
+);
+
+ALTER TABLE payment_methods ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "users_own_payment_methods" ON payment_methods;
+CREATE POLICY "users_own_payment_methods" ON payment_methods
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+
+-- Pessoas
 CREATE TABLE IF NOT EXISTS people (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   created_at timestamptz DEFAULT now() NOT NULL
 );
-ALTER TABLE people DISABLE ROW LEVEL SECURITY;
-INSERT INTO people (name) VALUES ('Arthur'), ('Pedro'), ('Luana') ON CONFLICT DO NOTHING;
-      `.trim()
-    }, { status: 400 })
-  }
 
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceRoleKey,
-    { auth: { autoRefreshToken: false, persistSession: false } }
-  )
+ALTER TABLE people ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "users_own_people" ON people;
+CREATE POLICY "users_own_people" ON people
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
-  const migrations = [
-    `ALTER TABLE transactions ADD COLUMN IF NOT EXISTS person text`,
-    `CREATE TABLE IF NOT EXISTS people (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, name text NOT NULL, created_at timestamptz DEFAULT now() NOT NULL)`,
-    `ALTER TABLE people DISABLE ROW LEVEL SECURITY`,
-    `INSERT INTO people (name) VALUES ('Arthur'), ('Pedro'), ('Luana') ON CONFLICT DO NOTHING`,
-  ]
+-- Lançamentos
+CREATE TABLE IF NOT EXISTS transactions (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  amount numeric(10,2) NOT NULL CHECK (amount > 0),
+  description text NOT NULL,
+  category_id uuid REFERENCES categories(id) ON DELETE SET NULL,
+  payment_method text,
+  date date NOT NULL,
+  person text,
+  paid boolean DEFAULT false,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT now() NOT NULL
+);
 
-  const results: { sql: string; ok: boolean; error?: string }[] = []
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "users_own_transactions" ON transactions;
+CREATE POLICY "users_own_transactions" ON transactions
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
-  for (const query of migrations) {
-    const { error } = await supabaseAdmin.from('_migrations_temp').select().limit(0).then(
-      () => ({ error: null }),
-      () => ({ error: null })
-    )
-    // For DDL we can't use the JS client directly; returning them for manual execution
-    results.push({ sql: query.substring(0, 80) + '...', ok: !error, error: (error as any)?.message })
-  }
+-- Índices
+CREATE INDEX IF NOT EXISTS transactions_date_idx ON transactions(date DESC);
+CREATE INDEX IF NOT EXISTS transactions_user_idx ON transactions(user_id);
+CREATE INDEX IF NOT EXISTS transactions_person_idx ON transactions(person);
+CREATE INDEX IF NOT EXISTS categories_user_idx ON categories(user_id);
+CREATE INDEX IF NOT EXISTS people_user_idx ON people(user_id);
+  `.trim()
 
-  return NextResponse.json({ results, note: 'Run the SQL in supabase-schema.sql for full migrations' })
+  return NextResponse.json({
+    message: 'Execute o SQL abaixo no Supabase SQL Editor.',
+    sql: migrations,
+  })
 }
