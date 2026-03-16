@@ -32,6 +32,27 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  async function deleteUser(userId: string) {
+    setDeletingId(userId)
+    setConfirmId(null)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { setDeletingId(null); return }
+
+    const res = await fetch(`/api/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    const json = await res.json()
+    setDeletingId(null)
+    if (res.ok) {
+      setUsers(prev => prev.filter(u => u.id !== userId))
+    } else {
+      setError(json.error ?? 'Erro ao deletar usuário.')
+    }
+  }
 
   async function loadUsers() {
     setLoading(true)
@@ -136,6 +157,7 @@ export default function AdminPage() {
                   <th className="hidden sm:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Cadastro</th>
                   <th className="hidden md:table-cell text-left py-3 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Último acesso</th>
                   <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Status</th>
+                  <th className="py-3 px-4" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -178,6 +200,36 @@ export default function AdminPage() {
                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400">
                           ⏳ Pendente
                         </span>
+                      )}
+                    </td>
+                    <td className="py-4 px-4 text-right">
+                      {u.email !== ADMIN_EMAIL && (
+                        confirmId === u.id ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="text-xs text-slate-400 hidden sm:inline">Confirmar?</span>
+                            <button
+                              onClick={() => deleteUser(u.id)}
+                              disabled={deletingId === u.id}
+                              className="px-2.5 py-1 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+                            >
+                              {deletingId === u.id ? '...' : 'Sim'}
+                            </button>
+                            <button
+                              onClick={() => setConfirmId(null)}
+                              className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                            >
+                              Não
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmId(u.id)}
+                            className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
+                            title="Deletar conta"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )
                       )}
                     </td>
                   </tr>
