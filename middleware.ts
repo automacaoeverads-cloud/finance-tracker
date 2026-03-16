@@ -22,8 +22,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  // ── A landing page (/) é pública ─────────────────────────────
-  if (pathname === '/') {
+  // ── A landing page (/) e callback OAuth são públicos ─────────
+  if (pathname === '/' || pathname === '/auth/callback') {
     return NextResponse.next()
   }
 
